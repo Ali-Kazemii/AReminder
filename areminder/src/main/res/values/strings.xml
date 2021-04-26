@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">AReminder</string>
+    <string name="response_error">"به یکی از دلایل زیر امکان برقراری ارتباط مقدور نمی باشد\n 1. دستگاه فاقد ارتباط اینترنتی میباشد. \n 2. سرور در دسترس نمی باشد. \n 3. خطایی در سرور یا برنامه رخ داده است."</string>
+    <string name="internal_server_error">خطایی در سرور رخ داده است.. با پشتیبانی تماس حاصل فرمایید.</string>
+    <string name="save">ذخیره</string>
+    <string name="delete">حذف</string>
+    <string name="enter_reminder_title">عنوان یادآور را اینجا بنویسید</string>
+    <string name="add_reminder_date">افزودن تاریخ و ساعت رویداد</string>
+    <string name="starting_date">تاریخ شروع :</string>
+    <string name="time">ساعت :</string>
+    <string name="end_date">تاریخ خاتمه :</string>
+    <string name="reminder_date">تاریخ هشدار</string>
+    <string name="date">تاریخ :</string>`
+    <string name="event_type">نوع رویداد</string>
+    <string name="meeting_location">مکان جلسه</string>
+    <string name="related_persons">افراد مربوطه</string>
+    <string name="add">افزودن</string>
+    <string name="are_you_sure_delete">آیا از حذف این آیتم مطمئن هستید؟</string>
+    <string name="fill_all_blanks">اطلاعات معتبر وارد کنید</string>
+    <string name="date_from">از تاریخ</string>
+    <string name="date_to">تا تاریخ</string>
+    <string name="show_all_events">نمایش همه رویدادها</string>
+    <string name="all_events">همه رویدادها</string>
+
+
+</resources>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:minHeight="120dp"
+            android:padding="12dp">
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                style="?attr/borderlessButtonStyle"
+                android:text="@string/save"
+                android:textSize="@dimen/textAppearanceBody1"
+                android:textColor="@color/white"/>
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnSave"
+                style="?attr/borderlessButtonStyle"
+                android:text="@string/delete"
+                android:textSize="@dimen/textAppearanceBody1"
+                android:textColor="@color/red_A700"
+                android:visibility="gone"/>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/ic_close"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="6dp"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtReminderTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:hint="@string/enter_reminder_title"
+                android:textColorHint="@color/grey_200"
+                android:textColor="@color/white"
+                android:layout_marginEnd="8dp"
+                android:textStyle="bold"
+                android:textCursorDrawable="@drawable/cursor"
+                android:background="@android:color/transparent">
+                <requestFocus/>
+            </androidx.appcompat.widget.AppCompatEditText>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/contain_add_reminder"/>
+    <include
+        android:id="@+id/loading"
+        layout="@layout/loading" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

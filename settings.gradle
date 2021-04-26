@@ -1,0 +1,3 @@
+include ':areminder'
+include ':app'
+rootProject.name = "Reminder"
