@@ -93,7 +93,16 @@ class ReminderFragment(
             it.result?.let { list ->
                 if (list.isNotEmpty()) {
                     markEventDays(list)
+                    persianCalendar.refresh()
+                    loading.isVisible = false
+
+                }else{
+                    persianCalendar.refresh()
+                    loading.isVisible = false
                 }
+            }?: kotlin.run {
+                persianCalendar.refresh()
+                loading.isVisible = false
             }
         })
     }
@@ -112,9 +121,6 @@ class ReminderFragment(
                 )
             }
         }
-        persianCalendar.refresh()
-        loading.isVisible = false
-
     }
 
     override fun handleOnClickListeners() {
