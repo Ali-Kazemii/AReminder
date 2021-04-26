@@ -16,9 +16,11 @@ import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.getMonthName
 import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.areminder.view.base.BaseFragment
-import ir.awlrhm.calendar.PersianHorizontalCalendar
-import ir.awlrhm.calendar.enums.PersianCustomMarks
-import ir.awlrhm.calendar.enums.PersianViewPagerType
+import ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
+import ir.awlrhm.areminder.view.acalenar.enums.PersianCustomMarks
+import ir.awlrhm.areminder.view.acalenar.enums.PersianViewPagerType
+import ir.awlrhm.modules.enums.Status
+import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.contain_reminder.*
 import kotlinx.android.synthetic.main.fragment_reminder.*
 import org.joda.time.Chronology
@@ -227,7 +229,18 @@ class ReminderFragment(
     }
 
     override fun handleError() {
-
+        val activity = activity ?: return
+        viewModel.error.observe(viewLifecycleOwner, {
+            ActionDialog.Builder()
+                .title(getString(R.string.warning))
+                .description(it.message ?: getString(R.string.response_error))
+                .cancelable(false)
+                .negative(getString(R.string.ok)) {
+                    activity.onBackPressed()
+                }
+                .build()
+                .show(activity.supportFragmentManager, ActionDialog.TAG)
+        })
     }
 
     interface OnActionListener {

@@ -30,7 +30,7 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun initialParams() {
-        val host =   intent.extras?.getString(KEY_HOST_NAME)
+        val host = intent.extras?.getString(KEY_HOST_NAME)
         val pref = PreferenceConfiguration(this)
         host?.let {
             pref.hostName = it
@@ -40,7 +40,7 @@ class ReminderActivity : AppCompatActivity() {
             pref.appVersion = intent.extras?.getString(KEY_APP_VERSION) ?: ""
             pref.deviceModel = intent.extras?.getString(KEY_DEVICE_MODEL) ?: ""
             pref.osVersion = intent.extras?.getString(KEY_OS_VERSION) ?: ""
-        }?: kotlin.run {
+        } ?: kotlin.run {
             onBackPressed()
         }
     }

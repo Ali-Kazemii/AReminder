@@ -74,7 +74,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ir.awlrhm.calendar.PersianHorizontalCalendar
+        <ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
             android:id="@+id/persianCalendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
