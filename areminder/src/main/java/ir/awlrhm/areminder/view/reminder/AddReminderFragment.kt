@@ -16,6 +16,7 @@ import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.modules.extentions.*
 import ir.awlrhm.modules.models.ItemModel
+import ir.awlrhm.modules.view.ActionDialog
 import ir.awlrhm.modules.view.ChooseDialog
 import ir.awrhm.modules.enums.MessageStatus
 import kotlinx.android.synthetic.main.contain_add_reminder.*
@@ -107,10 +108,8 @@ class AddReminderFragment(
                 postUserActivity()
             } else {
                 showLoading(false)
-                activity.showFlashbar(
-                    "",
+                activity.yToast(
                     getString(R.string.fill_all_blanks),
-                    false,
                     MessageStatus.ERROR
                 )
             }
@@ -226,10 +225,10 @@ class AddReminderFragment(
                     )
                 }
             }
-          /* if (listMeetingLocation.size > 0) {
-                txtLocation.text = listMeetingLocation[0].title
-                meetingLocationId = listMeetingLocation[0].id
-            }*/
+            /* if (listMeetingLocation.size > 0) {
+                  txtLocation.text = listMeetingLocation[0].title
+                  meetingLocationId = listMeetingLocation[0].id
+              }*/
         })
 
         viewModel.listCustomer.observe(viewLifecycleOwner, { response ->
@@ -253,34 +252,41 @@ class AddReminderFragment(
             }
         })
         viewModel.addSuccessful.observe(viewLifecycleOwner, {
-           showLoading(false)
-            activity.showFlashbar(
-                getString(R.string.success),
-                getString(R.string.success_operation),
-                true,
-                MessageStatus.SUCCESS
-            )
-            callback.invoke()
+            showLoading(false)
+            ActionDialog.Builder()
+                .title(getString(R.string.success))
+                .description(getString(R.string.success_operation))
+                .positive(
+                    getString(R.string.goto_main_page)
+                ) {
+                    callback.invoke()
+                }
+                .cancelable(true)
+                .build()
+                .show(activity.supportFragmentManager, ActionDialog.TAG)
         })
 
         viewModel.addFailure.observe(viewLifecycleOwner, {
             showLoading(false)
-            activity.showFlashbar(
-                getString(R.string.error),
+            activity.yToast(
                 it.message ?: getString(R.string.failed_operation),
-                false,
                 MessageStatus.ERROR
             )
         })
-        viewModel.responseBoolean.observe(viewLifecycleOwner,{ response ->
+        viewModel.responseBoolean.observe(viewLifecycleOwner, { response ->
             response.result?.let {
                 if (it) {
-                    activity.showFlashbar(
-                        getString(R.string.success),
-                        response.message ?: getString(R.string.success_operation),
-                        true,
-                        MessageStatus.SUCCESS
-                    )
+                    ActionDialog.Builder()
+                        .title(getString(R.string.success))
+                        .description(getString(R.string.success_operation))
+                        .positive(
+                            getString(R.string.goto_main_page)
+                        ) {
+                            callback.invoke()
+                        }
+                        .cancelable(false)
+                        .build()
+                        .show(activity.supportFragmentManager, ActionDialog.TAG)
                 }
             }
         })
@@ -312,7 +318,7 @@ class AddReminderFragment(
     private fun showCustomerList() {
         val activity = activity ?: return
         if (listCustomer.size > 0)
-           ChooseDialog(listCustomer) {
+            ChooseDialog(listCustomer) {
                 addCustomer(it)
             }.show(activity.supportFragmentManager, ChooseDialog.TAG)
     }
@@ -369,14 +375,16 @@ class AddReminderFragment(
 
     override fun handleError() {
         val activity = activity ?: return
-        viewModel.error.observe(this, {
-            showLoading(false)
-            activity.showFlashbar(
-                getString(R.string.error),
-                it.message ?: getString(R.string.response_error),
-                false,
-                MessageStatus.ERROR
-            )
+        viewModel.error.observe(viewLifecycleOwner, {
+            ActionDialog.Builder()
+                .title(getString(R.string.warning))
+                .description(it.message ?: getString(R.string.response_error))
+                .cancelable(false)
+                .negative(getString(R.string.ok)) {
+                    activity.onBackPressed()
+                }
+                .build()
+                .show(activity.supportFragmentManager, ActionDialog.TAG)
         })
     }
 

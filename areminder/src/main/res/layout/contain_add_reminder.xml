@@ -318,7 +318,7 @@
                     android:paddingEnd="12dp"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
-                    app:chipBackgroundColor="@color/colorPrimary"
+                    app:chipBackgroundColor="@color/green_700"
                     android:textAppearance="@style/TextCaptionStyle"
                     android:text="@string/add"
                     android:textColor="@color/white"

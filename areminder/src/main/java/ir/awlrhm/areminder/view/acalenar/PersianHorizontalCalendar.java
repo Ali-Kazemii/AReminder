@@ -114,7 +114,18 @@ public class PersianHorizontalCalendar extends LinearLayout implements PageViewL
         CURRENT,
         FUTURE
     }
-    //
+
+    //----------------- Action Listener for refresh view -------------------//
+
+    private OnActionListener actionListener;
+    public void setOnActionListener(OnActionListener listener){
+        actionListener = listener;
+    }
+    public interface OnActionListener{
+        void finish();
+    }
+    //----------------------------------------------------------------------//
+
 
     protected boolean ifExpand = true;
     protected TextView todayButton;
@@ -754,6 +765,8 @@ public class PersianHorizontalCalendar extends LinearLayout implements PageViewL
 
             expandedTopMargin = 0;
             collapsedTopMargin = 0;
+
+            actionListener.finish();
         }
 
         public void startHidePagerAnimation() {

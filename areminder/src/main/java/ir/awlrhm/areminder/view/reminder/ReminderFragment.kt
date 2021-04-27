@@ -15,11 +15,10 @@ import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.getMonthName
 import ir.awlrhm.areminder.utility.initialViewModel
-import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
 import ir.awlrhm.areminder.view.acalenar.enums.PersianCustomMarks
 import ir.awlrhm.areminder.view.acalenar.enums.PersianViewPagerType
-import ir.awlrhm.modules.enums.Status
+import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.contain_reminder.*
 import kotlinx.android.synthetic.main.fragment_reminder.*
@@ -83,28 +82,27 @@ class ReminderFragment(
         return inflater.inflate(R.layout.fragment_reminder, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.getUserActivityList()
-    }
-
     override fun handleObservers() {
         viewModel.listUserActivity.observe(viewLifecycleOwner, {
             it.result?.let { list ->
                 if (list.isNotEmpty()) {
                     markEventDays(list)
                     persianCalendar.refresh()
-                    loading.isVisible = false
 
-                }else{
+                } else {
                     persianCalendar.refresh()
-                    loading.isVisible = false
                 }
-            }?: kotlin.run {
+            } ?: kotlin.run {
                 persianCalendar.refresh()
-                loading.isVisible = false
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!loading.isVisible)
+            loading.isVisible = true
+        viewModel.getUserActivityList()
     }
 
     private fun markEventDays(list: List<UserActivityResponse.Result>) {
@@ -185,6 +183,10 @@ class ReminderFragment(
 
                 override fun onChangeViewPager(persianViewPagerType: PersianViewPagerType) {}
             })
+
+        persianCalendar.setOnActionListener {
+            loading.isVisible = false
+        }
     }
 
     private fun clearList() {
@@ -236,7 +238,7 @@ class ReminderFragment(
 
     override fun handleError() {
         val activity = activity ?: return
-        viewModel.error.observe(viewLifecycleOwner, {
+        viewModel.errorEventList.observe(viewLifecycleOwner, {
             ActionDialog.Builder()
                 .title(getString(R.string.warning))
                 .description(it.message ?: getString(R.string.response_error))
