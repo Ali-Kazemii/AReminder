@@ -54,11 +54,17 @@ class ReminderFragment(
     )
     private var listEvents: MutableList<UserActivityResponse.Result> = mutableListOf()
 
-    @SuppressLint("SetTextI18n")
     override fun setup() {
         val activity = activity ?: return
 
         viewModel = activity.initialViewModel()
+        //this line cause the nested scroll remain on top of the list
+//        nestedScroll.parent.requestChildFocus(nestedScroll, nestedScroll)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun init() {
+        layoutRoot.isVisible = true
         Glide.with(this)
             .load(monthResource[getMonthIndex(now)])
             .apply(RequestOptions())
@@ -69,9 +75,6 @@ class ReminderFragment(
             "${now.dayOfMonth} ${getMonthName(now.monthOfYear)}  ${now.year}"
 
         rclItemEvent.layoutManager = LinearLayoutManager(context)
-
-        //this line cause the nested scroll remain on top of the list
-//        nestedScroll.parent.requestChildFocus(nestedScroll, nestedScroll)
     }
 
     override fun onCreateView(
@@ -86,6 +89,7 @@ class ReminderFragment(
         viewModel.listUserActivity.observe(viewLifecycleOwner, {
             it.result?.let { list ->
                 if (list.isNotEmpty()) {
+                    init()
                     markEventDays(list)
                     persianCalendar.refresh()
 

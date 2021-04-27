@@ -54,7 +54,7 @@
                         android:id="@+id/btnFilter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/circle_round"
+                        android:background="@android:color/transparent"
                         android:tint="@color/colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

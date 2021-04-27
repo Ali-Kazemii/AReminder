@@ -233,6 +233,12 @@ public class PersianHorizontalCalendar extends LinearLayout implements PageViewL
     }
 
     public void refresh() {
+       /* setupCellWidth();
+
+        marks.init();
+        if (can_mark_today)
+            marks.markToday();
+        marks.refreshMarkSelected(selectionDate, can_mark_selected_day);*/
         initAnimation();
     }
 
