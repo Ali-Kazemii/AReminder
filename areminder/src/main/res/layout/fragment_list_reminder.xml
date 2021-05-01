@@ -88,10 +88,14 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ir.awlrhm.modules.view.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rclReminder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+    <include
+        android:id="@+id/loading"
+        layout="@layout/loading"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

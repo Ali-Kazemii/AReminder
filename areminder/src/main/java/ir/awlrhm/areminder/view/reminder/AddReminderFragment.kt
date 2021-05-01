@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
 import ir.awlrhm.areminder.R
@@ -42,6 +43,8 @@ class AddReminderFragment(
     private var reminderTypeId: Long = -1
     private var meetingLocationId: Long = -1
     private var _uaId: Long = 0
+    private var addPerson = false
+
 
     override fun setup() {
         val activity = activity ?: return
@@ -91,16 +94,20 @@ class AddReminderFragment(
 
         btnClose.setOnClickListener { activity.onBackPressed() }
         btnDelete.setOnClickListener {
-            activity.showActionFlashbar(
-                getString(R.string.warning),
-                getString(R.string.are_you_sure_delete)
-            ) {
-                viewModel.deleteUserActivity(
-                    DeleteUserRequest().apply {
-                        this.uaId = model?.uaId
-                    }
-                )
-            }
+            ActionDialog.Builder()
+                .title(getString(R.string.warning))
+                .description(getString(R.string.are_you_sure_delete))
+                .positive(getString(R.string.ok)) {
+                    showLoading(true)
+                    viewModel.deleteUserActivity(
+                        DeleteUserRequest().apply {
+                            this.uaId = model?.uaId
+                        }
+                    )
+                }
+                .negative(getString(R.string.no)) {}
+                .build()
+                .show(activity.supportFragmentManager, ActionDialog.TAG)
         }
         btnSave.setOnClickListener {
             if (isValid) {
@@ -112,6 +119,22 @@ class AddReminderFragment(
                     getString(R.string.fill_all_blanks),
                     MessageStatus.ERROR
                 )
+                if(!addPerson)
+                    txtAddPeople.isVisible = true
+
+                if(edtReminderTitle.text.toString().isEmpty())
+                    edtReminderTitle.error = getString(R.string.fill_event_title)
+
+                if(reminderTypeId == -1L){
+                    txtEventType.setTextColor(ContextCompat.getColor(activity, R.color.red_500))
+                    txtEventType.text = getString(R.string.choose_event_type)
+                }
+
+                if(meetingLocationId == -1L){
+                    txtLocation.setTextColor(ContextCompat.getColor(activity, R.color.red_500))
+                    txtLocation.text = getString(R.string.choose_location)
+                }
+
             }
         }
         txtStartDate.setOnClickListener {
@@ -205,11 +228,6 @@ class AddReminderFragment(
                     )
                 }
             }
-
-            /*if (listReminderType.size > 0) {
-                txtEventType.text = listReminderType[0].title
-                reminderTypeId = listReminderType[0].id
-            }*/
         })
 
         viewModel.listMeetingLocation.observe(viewLifecycleOwner, { response ->
@@ -225,10 +243,6 @@ class AddReminderFragment(
                     )
                 }
             }
-            /* if (listMeetingLocation.size > 0) {
-                  txtLocation.text = listMeetingLocation[0].title
-                  meetingLocationId = listMeetingLocation[0].id
-              }*/
         })
 
         viewModel.listCustomer.observe(viewLifecycleOwner, { response ->
@@ -253,40 +267,30 @@ class AddReminderFragment(
         })
         viewModel.addSuccessful.observe(viewLifecycleOwner, {
             showLoading(false)
-            ActionDialog.Builder()
-                .title(getString(R.string.success))
-                .description(getString(R.string.success_operation))
-                .positive(
-                    getString(R.string.goto_main_page)
-                ) {
-                    callback.invoke()
-                }
-                .cancelable(true)
-                .build()
-                .show(activity.supportFragmentManager, ActionDialog.TAG)
+            activity.yToast(
+                getString(R.string.success_operation),
+                MessageStatus.SUCCESS
+            )
+            callback.invoke()
         })
 
         viewModel.addFailure.observe(viewLifecycleOwner, {
             showLoading(false)
-            activity.yToast(
+            activity.showFlashbar(
+                getString(R.string.error),
                 it.message ?: getString(R.string.failed_operation),
+                false,
                 MessageStatus.ERROR
             )
         })
         viewModel.responseBoolean.observe(viewLifecycleOwner, { response ->
             response.result?.let {
                 if (it) {
-                    ActionDialog.Builder()
-                        .title(getString(R.string.success))
-                        .description(getString(R.string.success_operation))
-                        .positive(
-                            getString(R.string.goto_main_page)
-                        ) {
-                            callback.invoke()
-                        }
-                        .cancelable(false)
-                        .build()
-                        .show(activity.supportFragmentManager, ActionDialog.TAG)
+                    activity.yToast(
+                        getString(R.string.success_operation),
+                        MessageStatus.SUCCESS
+                    )
+                    callback.invoke()
                 }
             }
         })
@@ -333,6 +337,8 @@ class AddReminderFragment(
         view.setOnClickListener {
             chipGroup.removeViewAt(chipGroup.indexOfChild(view))
         }
+        txtAddPeople.isVisible = false
+        addPerson = true
         chipGroup.addView(view)
     }
 
@@ -371,6 +377,7 @@ class AddReminderFragment(
             return reminderTypeId != -1L
                     && meetingLocationId != -1L
                     && edtReminderTitle.text.toString().isNotEmpty()
+                    && addPerson
         }
 
     override fun handleError() {

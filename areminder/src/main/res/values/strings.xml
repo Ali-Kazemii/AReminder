@@ -21,7 +21,10 @@
     <string name="date_to">تا تاریخ</string>
     <string name="show_all_events">نمایش همه رویدادها</string>
     <string name="all_events">همه رویدادها</string>
-    <string name="goto_main_page">رفتن به صفحه اصلی</string>
-
+    <string name="fill_event_title">عنوان یادآور را وارد نمایید</string>
+    <string name="choose_event_type">نوع رویداد را انتخاب کنید</string>
+    <string name="choose_location">مکان رویداد را انتخاب کنید</string>
+    <string name="choose_related_people">افراد مربوطه را انتخاب نمایید</string>
+    <string name="no_item_exist">آیتمی وجود ندارد</string>
 
 </resources>

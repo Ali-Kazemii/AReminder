@@ -28,6 +28,7 @@ import org.joda.time.DateTimeZone
 import org.joda.time.chrono.PersianChronologyKhayyam
 
 class ReminderFragment(
+    private val listEvents: MutableList<UserActivityResponse.Result>,
     private val listener: OnActionListener
 ) : BaseFragment() {
 
@@ -52,7 +53,6 @@ class ReminderFragment(
         R.drawable.bkg_11_nov,
         R.drawable.bkg_12_dec,
     )
-    private var listEvents: MutableList<UserActivityResponse.Result> = mutableListOf()
 
     @SuppressLint("SetTextI18n")
     override fun setup() {
@@ -72,6 +72,8 @@ class ReminderFragment(
         rclItemEvent.layoutManager = LinearLayoutManager(context)
         //this line cause the nested scroll remain on top of the list
 //        nestedScroll.parent.requestChildFocus(nestedScroll, nestedScroll)
+        if(listEvents.isEmpty())
+            btnShowEvents.isVisible = false
     }
 
     override fun onCreateView(
@@ -82,41 +84,22 @@ class ReminderFragment(
         return inflater.inflate(R.layout.fragment_reminder, container, false)
     }
 
-    override fun handleObservers() {
-        viewModel.listUserActivity.observe(viewLifecycleOwner, {
-            it.result?.let { list ->
-                if (list.isNotEmpty()) {
-                    markEventDays(list)
-                    refreshCalendar()
-
-                } else {
-                    refreshCalendar()
-                }
-            } ?: kotlin.run {
-                refreshCalendar()
-            }
-        })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        markEventDays()
+        refreshCalendar()
     }
 
     private fun refreshCalendar() {
-        persianCalendar.isVisible = true
         persianCalendar.refresh()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!loading.isVisible)
-            loading.isVisible = true
-        viewModel.getUserActivityList()
-    }
-
-    private fun markEventDays(list: List<UserActivityResponse.Result>) {
-        list.forEach { model ->
+    private fun markEventDays() {
+        listEvents.forEach { model ->
             val date = model.startDate?.split("/")
             date?.let { d ->
                 val dateTime = DateTime(d[0].toInt(), d[1].toInt(), d[2].toInt(), 0, 0, chronology)
                 model.dateTime = "${dateTime.year}${dateTime.monthOfYear}${dateTime.dayOfMonth}"
-                listEvents.add(model)
                 persianCalendar.markDate(
                     dateTime,
                     PersianCustomMarks.SmallOval_Bottom,
@@ -127,18 +110,15 @@ class ReminderFragment(
     }
 
     override fun handleOnClickListeners() {
-
         layoutCalendar.setOnClickListener {
             scrollToToday()
         }
-
         btnShowEvents.setOnClickListener {
             listener.onShowAllEvents()
         }
         btnAdd.setOnClickListener {
             listener.onAdd()
         }
-
         layoutTitle.setOnClickListener {
             if (persianCalendar.isExpand) {
                 ObjectAnimator.ofFloat(imgArrow, View.ROTATION, 180f, 0f).setDuration(300).start()
@@ -152,7 +132,6 @@ class ReminderFragment(
                 imgMonth.isVisible = false
             }
         }
-
         persianCalendar
             .setPersianHorizontalExpCalListener(object :
                 PersianHorizontalCalendar.PersianHorizontalExpCalListener {
@@ -221,14 +200,6 @@ class ReminderFragment(
             .into(imgMonth)
     }
 
-    private fun clearMarks() {
-        persianCalendar
-            .clearMarks()
-            .markToday()
-            .updateMarks()
-        scrollToToday()
-    }
-
     private fun scrollToToday() {
         persianCalendar.scrollToDate(now)
     }
@@ -240,6 +211,8 @@ class ReminderFragment(
         else
             current - 10
     }
+
+    override fun handleObservers() {}
 
     override fun handleError() {
         val activity = activity ?: return

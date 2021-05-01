@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.modules.extentions.showFlashbar
+import ir.awlrhm.modules.extentions.yToast
 import ir.awrhm.modules.enums.MessageStatus
 import kotlinx.android.synthetic.main.fragment_list_reminder.*
 import org.joda.time.DateTimeZone
@@ -25,7 +27,7 @@ class ReminderListFragment(
         val activity = activity ?: return
 
         viewModel = activity.initialViewModel()
-        rclReminder.layoutManager(LinearLayoutManager(activity))
+        rclReminder.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, true)
     }
 
     override fun onCreateView(
@@ -36,12 +38,10 @@ class ReminderListFragment(
         return inflater.inflate(R.layout.fragment_list_reminder, container, false)
     }
 
-
-
     override fun onResume() {
         super.onResume()
-        if(!rclReminder.isOnLoading)
-            rclReminder.showLoading()
+        if(!loading.isVisible)
+            loading.isVisible = true
         viewModel.getUserActivityList()
     }
 
@@ -55,7 +55,7 @@ class ReminderListFragment(
         }
         btnFilter.setOnClickListener {
             FilterReminderBottomSheet{ start, end ->
-                rclReminder.showLoading()
+                loading.isVisible = true
                 viewModel.getUserActivityList(0,start, end)
             }.show(activity.supportFragmentManager, FilterReminderBottomSheet.TAG)
         }
@@ -64,8 +64,9 @@ class ReminderListFragment(
     override fun handleObservers() {
         viewModel.listUserActivity.observe(viewLifecycleOwner,{
             it.result?.let { list ->
-                if (list.isNotEmpty())
-                    rclReminder?.view?.adapter = Adapter(
+                if (list.isNotEmpty()){
+                    loading.isVisible = false
+                rclReminder.adapter = Adapter(
                         PersianChronologyKhayyam.getInstance(
                             DateTimeZone.getDefault()
                         ),
@@ -76,22 +77,33 @@ class ReminderListFragment(
                             }
                         }
                     )
-                else
-                    rclReminder.showNoData()
-            } ?: kotlin.run {
-                rclReminder.showNoData()
-            }
+                    rclReminder.scrollToPosition(0)
+
+                }else
+            showNoData()
+        } ?: kotlin.run {
+            showNoData()
+        }
         })
+    }
+
+    private fun showNoData() {
+        val activity = activity ?: return
+
+        activity.yToast(
+            getString(R.string.no_item_exist),
+            MessageStatus.ERROR
+        )
+        activity.onBackPressed()
     }
 
     override fun handleError() {
         val activity = activity ?: return
         viewModel.error.observe(this,{
-            rclReminder.showNoData()
             activity.showFlashbar(
                 getString(R.string.error),
                 it.message ?: getString(R.string.response_error),
-                false,
+                true,
                 MessageStatus.ERROR
             )
         })

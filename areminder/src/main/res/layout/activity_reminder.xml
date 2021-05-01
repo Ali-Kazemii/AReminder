@@ -4,4 +4,9 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.reminder.ReminderActivity" />
+    tools:context=".view.reminder.ReminderActivity">
+
+    <include
+        android:id="@+id/loading"
+        layout="@layout/loading" />
+</FrameLayout>

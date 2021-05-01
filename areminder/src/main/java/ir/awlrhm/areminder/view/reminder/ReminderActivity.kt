@@ -2,6 +2,7 @@ package ir.awlrhm.areminder.view.reminder
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
@@ -15,6 +16,7 @@ import ir.awlrhm.areminder.utility.Const.KEY_SSID
 import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.modules.extentions.addFragmentInActivity
 import ir.awlrhm.modules.extentions.replaceFragmentInActivity
+import kotlinx.android.synthetic.main.activity_reminder.*
 
 class ReminderActivity : AppCompatActivity() {
 
@@ -24,9 +26,10 @@ class ReminderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminder)
 
+        handleObservers()
         initialParams()
         viewModel = initialViewModel()
-        gotoReminderFragment()
+        getEvents()
     }
 
     private fun initialParams() {
@@ -45,10 +48,27 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-    private fun gotoReminderFragment() {
+
+    private fun getEvents() {
+        if (!loading.isVisible)
+            loading.isVisible = true
+        viewModel.getUserActivityList()
+    }
+
+    private fun handleObservers() {
+        viewModel.listUserActivity.observe(this, {
+            it.result?.let { list ->
+                loading.isVisible = false
+                gotoReminderFragment(list)
+            }
+        })
+    }
+
+    private fun gotoReminderFragment(list: MutableList<UserActivityResponse.Result>) {
         replaceFragmentInActivity(
             R.id.container,
             ReminderFragment(
+                list,
                 object : ReminderFragment.OnActionListener {
                     override fun onAdd() {
                         gotoAddReminder()
@@ -87,7 +107,7 @@ class ReminderActivity : AppCompatActivity() {
         addFragmentInActivity(
             R.id.container,
             AddReminderFragment {
-
+                getEvents()
             },
             AddReminderFragment.TAG
         )
@@ -97,16 +117,22 @@ class ReminderActivity : AppCompatActivity() {
         addFragmentInActivity(
             R.id.container,
             AddReminderFragment(model) {
-
+                getEvents()
             },
             AddReminderFragment.TAG
         )
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1)
+        val reminderFragment = supportFragmentManager.findFragmentByTag(ReminderFragment.TAG)
+        val addReminderFragment = supportFragmentManager.findFragmentByTag(AddReminderFragment.TAG)
+        if(addReminderFragment != null && addReminderFragment.isVisible)
             supportFragmentManager.popBackStack()
-        else
+
+        else if(reminderFragment != null && reminderFragment.isVisible)
             this.finish()
+
+        else if (supportFragmentManager.backStackEntryCount > 1)
+            supportFragmentManager.popBackStack()
     }
 }

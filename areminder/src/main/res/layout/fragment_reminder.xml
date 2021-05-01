@@ -85,12 +85,7 @@
             app:mark_today="true"
             app:range_months_after_init="48"
             app:range_months_before_init="48"
-            app:use_RTL_direction="true"
-            android:visibility="gone"/>
-
-        <include
-            layout="@layout/contain_reminder"
-            app:layout_constraintTop_toBottomOf="@id/layoutCalendar" />
+            app:use_RTL_direction="true"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
