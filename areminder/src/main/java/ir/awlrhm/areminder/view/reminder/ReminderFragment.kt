@@ -213,21 +213,7 @@ class ReminderFragment(
     }
 
     override fun handleObservers() {}
-
-    override fun handleError() {
-        val activity = activity ?: return
-        viewModel.errorEventList.observe(viewLifecycleOwner, {
-            ActionDialog.Builder()
-                .title(getString(R.string.warning))
-                .description(it.message ?: getString(R.string.response_error))
-                .cancelable(false)
-                .negative(getString(R.string.ok)) {
-                    activity.onBackPressed()
-                }
-                .build()
-                .show(activity.supportFragmentManager, ActionDialog.TAG)
-        })
-    }
+    override fun handleError() {}
 
     interface OnActionListener {
         fun onAdd()

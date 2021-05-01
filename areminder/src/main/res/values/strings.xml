@@ -26,5 +26,6 @@
     <string name="choose_location">مکان رویداد را انتخاب کنید</string>
     <string name="choose_related_people">افراد مربوطه را انتخاب نمایید</string>
     <string name="no_item_exist">آیتمی وجود ندارد</string>
+    <string name="wait">لطفا منتظر بمانید</string>
 
 </resources>

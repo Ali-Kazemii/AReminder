@@ -16,6 +16,7 @@ import ir.awlrhm.areminder.utility.Const.KEY_SSID
 import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.modules.extentions.addFragmentInActivity
 import ir.awlrhm.modules.extentions.replaceFragmentInActivity
+import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.activity_reminder.*
 
 class ReminderActivity : AppCompatActivity() {
@@ -29,6 +30,7 @@ class ReminderActivity : AppCompatActivity() {
         initialParams()
         viewModel = initialViewModel()
         handleObservers()
+        handleError()
         getEvents()
     }
 
@@ -121,6 +123,20 @@ class ReminderActivity : AppCompatActivity() {
             },
             AddReminderFragment.TAG
         )
+    }
+
+    private fun handleError() {
+        viewModel.errorEventList.observe(this, {
+            ActionDialog.Builder()
+                .title(getString(R.string.warning))
+                .description(it.message ?: getString(R.string.response_error))
+                .cancelable(false)
+                .negative(getString(R.string.ok)) {
+                    onBackPressed()
+                }
+                .build()
+                .show(supportFragmentManager, ActionDialog.TAG)
+        })
     }
 
     override fun onBackPressed() {

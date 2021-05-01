@@ -8,5 +8,5 @@
 
     <include
         android:id="@+id/loading"
-        layout="@layout/loading" />
+        layout="@layout/awlrhm_loading" />
 </FrameLayout>
