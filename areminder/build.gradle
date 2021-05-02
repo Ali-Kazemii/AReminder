@@ -25,13 +25,6 @@ android {
             minifyEnabled false
             shrinkResources false
         }
-        release {
-            debuggable false
-            // Enables resource shrinking, which is performed by the
-            // Android Gradle plugin.
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
