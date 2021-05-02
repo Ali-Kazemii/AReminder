@@ -40,6 +40,13 @@
 ## generic------------------------------------------------------------------------------------------
 -keep class ir.awlrhm.areminder.data.network.model.request.** { *; }
 -keep class ir.awlrhm.areminder.data.network.model.response.** { *; }
+-keep class ir.awlrhm.areminder.utility.**{ *; }
+-keep class ir.awlrhm.areminder.view.acalenar.enums.**{ *; }
+-keep class ir.awlrhm.areminder.view.acalenar.model.**{ *; }
+-keep class ir.awlrhm.areminder.view.acalenar.animator.**{ *; }
+-keep class ir.awlrhm.areminder.view.acalenar.listener.**{ *; }
+-keep class ir.awlrhm.areminder.view.acalenar.**{ *; }
+-keep class ir.awlrhm.areminder.view.reminder.**{ *; }
 #---------------------------------------------------------------------------------------------------
 
 #begin Retrofit------------------------------------------------------------------------
