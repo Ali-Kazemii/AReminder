@@ -50,7 +50,6 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-
     private fun getEvents() {
         if (!loading.isVisible)
             loading.isVisible = true
@@ -60,7 +59,8 @@ class ReminderActivity : AppCompatActivity() {
     private fun handleObservers() {
         viewModel.listUserActivity.observe(this, {
             it.result?.let { list ->
-                loading.isVisible = false
+                if (loading.isVisible)
+                    loading.isVisible = false
                 gotoReminderFragment(list)
             }
         })
@@ -142,12 +142,10 @@ class ReminderActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val reminderFragment = supportFragmentManager.findFragmentByTag(ReminderFragment.TAG)
         val addReminderFragment = supportFragmentManager.findFragmentByTag(AddReminderFragment.TAG)
-        if(addReminderFragment != null && addReminderFragment.isVisible)
+        if (addReminderFragment != null && addReminderFragment.isVisible)
             supportFragmentManager.popBackStack()
-
-        else if(reminderFragment != null && reminderFragment.isVisible)
+        else if (reminderFragment != null && reminderFragment.isVisible)
             this.finish()
-
         else if (supportFragmentManager.backStackEntryCount > 1)
             supportFragmentManager.popBackStack()
     }

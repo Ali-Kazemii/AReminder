@@ -330,13 +330,12 @@
                     android:paddingEnd="12dp"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
-                    app:chipBackgroundColor="@color/green_700"
+                    app:chipBackgroundColor="@color/light_green_500"
                     android:textAppearance="@style/TextCaptionStyle"
                     android:text="@string/add"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     app:closeIconEnabled="true"
-                    app:closeIconTint="@color/white"
-                    app:closeIcon="@drawable/ic_add"
+                    app:closeIcon="@drawable/ic_borderless_add"
                     app:checkedIconEnabled="false"/>
             </com.google.android.material.chip.ChipGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>

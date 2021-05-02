@@ -23,12 +23,14 @@ class ReminderViewModel : ViewModel() {
     val responseBoolean = MutableLiveData<ResponseBoolean>()
 
     val errorEventList = MutableLiveData<BaseResponse>()
+    val errorEventList1 = MutableLiveData<BaseResponse>()
     val addSuccessful = MutableLiveData<ResponseId>()
     val addFailure = MutableLiveData<BaseResponse>()
     val listReminderType = MutableLiveData<ReminderTypeResponse>()
     val listMeetingLocation = MutableLiveData<MeetingLocationResponse>()
     val listCustomer = MutableLiveData<CustomerListResponse>()
     val listUserActivity = MutableLiveData<UserActivityResponse>()
+    val listUserActivity1 = MutableLiveData<UserActivityResponse>()
     val listUserActivityInvite = MutableLiveData<UserActivityInviteResponse>()
 
     fun init(
@@ -153,6 +155,27 @@ class ReminderViewModel : ViewModel() {
 
                 override fun onError(response: BaseResponse?) {
                     response?.let { errorEventList.postValue(it) }
+                }
+            }
+        )
+    }
+
+    fun getUserActivityList1(
+        activityTypeId: Long = 0,
+        startDate: String = "",
+        endDate: String = ""
+    ) {
+        remote.getUserActivityList(
+            activityTypeId,
+            startDate,
+            endDate,
+            object : RemoteRepository.OnApiCallback<UserActivityResponse> {
+                override fun onDataLoaded(data: UserActivityResponse) {
+                    listUserActivity1.postValue(data)
+                }
+
+                override fun onError(response: BaseResponse?) {
+                    response?.let { errorEventList1.postValue(it) }
                 }
             }
         )

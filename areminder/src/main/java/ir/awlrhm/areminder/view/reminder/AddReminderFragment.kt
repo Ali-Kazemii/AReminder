@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import com.google.android.material.chip.Chip
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.request.DeleteUserRequest
@@ -115,6 +116,7 @@ class AddReminderFragment(
                 postUserActivity()
             } else {
                 showLoading(false)
+                activity.hideKeyboard(edtReminderTitle)
                 activity.yToast(
                     getString(R.string.fill_all_blanks),
                     MessageStatus.ERROR
@@ -217,80 +219,97 @@ class AddReminderFragment(
         val activity = activity ?: return
 
         viewModel.listReminderType.observe(viewLifecycleOwner, { response ->
-            listReminderType = mutableListOf<ItemModel>().apply {
-                response.result?.forEachIndexed { index, result ->
-                    add(
-                        index,
-                        ItemModel(
-                            result.baseId ?: 0,
-                            result.title ?: ""
+            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                listReminderType = mutableListOf<ItemModel>().apply {
+                    response.result?.forEachIndexed { index, result ->
+                        add(
+                            index,
+                            ItemModel(
+                                result.baseId ?: 0,
+                                result.title ?: ""
+                            )
                         )
-                    )
+                    }
                 }
             }
         })
 
         viewModel.listMeetingLocation.observe(viewLifecycleOwner, { response ->
-            showLoading(false)
-            listMeetingLocation = mutableListOf<ItemModel>().apply {
-                response.result?.forEachIndexed { index, result ->
-                    add(
-                        index,
-                        ItemModel(
-                            result.mlId ?: 0,
-                            result.title ?: ""
+            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                showLoading(false)
+                listMeetingLocation = mutableListOf<ItemModel>().apply {
+                    response.result?.forEachIndexed { index, result ->
+                        add(
+                            index,
+                            ItemModel(
+                                result.mlId ?: 0,
+                                result.title ?: ""
+                            )
                         )
-                    )
+                    }
                 }
             }
         })
 
         viewModel.listCustomer.observe(viewLifecycleOwner, { response ->
-            listCustomer = mutableListOf<ItemModel>().apply {
-                response.result?.forEachIndexed { index, result ->
-                    add(
-                        index,
-                        ItemModel(
-                            result.customerId ?: 0,
-                            result.title ?: ""
+            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                listCustomer = mutableListOf<ItemModel>().apply {
+                    response.result?.forEachIndexed { index, result ->
+                        add(
+                            index,
+                            ItemModel(
+                                result.customerId ?: 0,
+                                result.title ?: ""
+                            )
                         )
-                    )
+                    }
                 }
             }
         })
+
         viewModel.listUserActivityInvite.observe(viewLifecycleOwner, { response ->
-            response.result?.let {
-                it.forEach { item ->
-                    initInviteCustomer(item)
+            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                response.result?.let {
+                    it.forEach { item ->
+                        initInviteCustomer(item)
+                    }
                 }
             }
         })
+
         viewModel.addSuccessful.observe(viewLifecycleOwner, {
-            showLoading(false)
-            activity.yToast(
-                getString(R.string.success_operation),
-                MessageStatus.SUCCESS
-            )
-            callback.invoke()
+            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                showLoading(false)
+                activity.yToast(
+                    getString(R.string.success_operation),
+                    MessageStatus.SUCCESS
+                )
+                callback.invoke()
+            }
         })
 
         viewModel.addFailure.observe(viewLifecycleOwner, {
-            showLoading(false)
-            activity.showFlashbar(
-                getString(R.string.error),
-                it.message ?: getString(R.string.failed_operation),
-                false,
-                MessageStatus.ERROR
-            )
+            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                showLoading(false)
+                activity.showFlashbar(
+                    getString(R.string.error),
+                    it.message ?: getString(R.string.failed_operation),
+                    false,
+                    MessageStatus.ERROR
+                )
+            }
         })
+
         viewModel.responseBoolean.observe(viewLifecycleOwner, { response ->
-            response.result?.let {
-                if (it) {
-                    activity.yToast(
-                        getString(R.string.success_operation),
-                        MessageStatus.SUCCESS
-                    )
-                    callback.invoke()
+            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                response.result?.let {
+                    if (it) {
+                        activity.yToast(
+                            getString(R.string.success_operation),
+                            MessageStatus.SUCCESS
+                        )
+                        callback.invoke()
+                    }
                 }
             }
         })
@@ -308,6 +327,7 @@ class AddReminderFragment(
         if (listMeetingLocation.size > 0)
             ChooseDialog(listMeetingLocation) {
                 meetingLocationId = it.id
+                txtLocation.setTextColor(ContextCompat.getColor(activity, R.color.black))
                 txtLocation.text = it.title
             }.show(activity.supportFragmentManager, ChooseDialog.TAG)
     }
@@ -367,6 +387,7 @@ class AddReminderFragment(
         if (listReminderType.size > 0)
             ChooseDialog(listReminderType) {
                 reminderTypeId = it.id
+                txtEventType.setTextColor(ContextCompat.getColor(activity, R.color.black))
                 txtEventType.text = it.title
             }.show(activity.supportFragmentManager, ChooseDialog.TAG)
 
@@ -394,6 +415,8 @@ class AddReminderFragment(
                 .show(activity.supportFragmentManager, ActionDialog.TAG)
         })
     }
+
+
 
     companion object {
         val TAG = "automation: ${AddReminderFragment::class.java.simpleName}"

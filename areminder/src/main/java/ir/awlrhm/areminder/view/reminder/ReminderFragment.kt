@@ -19,7 +19,6 @@ import ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
 import ir.awlrhm.areminder.view.acalenar.enums.PersianCustomMarks
 import ir.awlrhm.areminder.view.acalenar.enums.PersianViewPagerType
 import ir.awlrhm.areminder.view.base.BaseFragment
-import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.contain_reminder.*
 import kotlinx.android.synthetic.main.fragment_reminder.*
 import org.joda.time.Chronology
@@ -59,7 +58,6 @@ class ReminderFragment(
         val activity = activity ?: return
 
         viewModel = activity.initialViewModel()
-
         Glide.with(this)
             .load(monthResource[getMonthIndex(now)])
             .apply(RequestOptions())
@@ -167,10 +165,6 @@ class ReminderFragment(
 
                 override fun onChangeViewPager(persianViewPagerType: PersianViewPagerType) {}
             })
-
-        persianCalendar.setOnActionListener {
-            loading.isVisible = false
-        }
     }
 
     private fun clearList() {

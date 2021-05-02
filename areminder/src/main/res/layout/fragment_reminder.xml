@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,6 +86,9 @@
             app:range_months_before_init="48"
             app:use_RTL_direction="true"/>
 
+        <include
+            layout="@layout/contain_reminder"
+            app:layout_constraintTop_toBottomOf="@id/layoutCalendar" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -100,8 +102,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="ContentDescription" />
-
-    <include
-        android:id="@+id/loading"
-        layout="@layout/loading"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
