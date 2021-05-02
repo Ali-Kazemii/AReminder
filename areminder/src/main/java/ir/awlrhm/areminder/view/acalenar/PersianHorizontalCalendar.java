@@ -124,7 +124,7 @@ public class PersianHorizontalCalendar extends LinearLayout implements PageViewL
     }
 
     public interface OnActionListener {
-        void finish();
+        void onCalendarFinishAnimaiton();
     }
     //----------------------------------------------------------------------//
 
@@ -775,7 +775,7 @@ public class PersianHorizontalCalendar extends LinearLayout implements PageViewL
             collapsedTopMargin = 0;
 
             if (actionListener != null)
-                actionListener.finish();
+                actionListener.onCalendarFinishAnimaiton();
         }
 
         public void startHidePagerAnimation() {

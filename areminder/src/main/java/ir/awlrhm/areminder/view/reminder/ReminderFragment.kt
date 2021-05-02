@@ -29,7 +29,7 @@ import org.joda.time.chrono.PersianChronologyKhayyam
 class ReminderFragment(
     private val listEvents: MutableList<UserActivityResponse.Result>,
     private val listener: OnActionListener
-) : BaseFragment() {
+) : BaseFragment(), PersianHorizontalCalendar.OnActionListener {
 
     private lateinit var viewModel: ReminderViewModel
     private var adapter: Adapter? = null
@@ -86,6 +86,7 @@ class ReminderFragment(
         super.onViewCreated(view, savedInstanceState)
         markEventDays()
         refreshCalendar()
+
     }
 
     private fun refreshCalendar() {
@@ -108,6 +109,8 @@ class ReminderFragment(
     }
 
     override fun handleOnClickListeners() {
+        persianCalendar.setOnActionListener(this)
+
         layoutCalendar.setOnClickListener {
             scrollToToday()
         }
@@ -165,6 +168,10 @@ class ReminderFragment(
 
                 override fun onChangeViewPager(persianViewPagerType: PersianViewPagerType) {}
             })
+    }
+
+    override fun onCalendarFinishAnimaiton() {
+        loading.isVisible = false
     }
 
     private fun clearList() {

@@ -29,7 +29,7 @@ class ReminderListFragment(
 
         viewModel = activity.initialViewModel()
         rclReminder.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, true)
+            LinearLayoutManager(activity)
     }
 
     override fun onCreateView(
