@@ -3,6 +3,7 @@ package ir.awlrhm.areminder.view.reminder
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
@@ -57,11 +58,13 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun handleObservers() {
-        viewModel.listUserActivity.observe(this, {
+        viewModel.listUserActivity.observe(this, Observer{
             it.result?.let { list ->
                 if (loading.isVisible)
                     loading.isVisible = false
                 gotoReminderFragment(list)
+            }?: kotlin.run {
+                this.finish()
             }
         })
     }
@@ -126,13 +129,13 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun handleError() {
-        viewModel.errorEventList.observe(this, {
+        viewModel.errorEventList.observe(this, Observer{
             ActionDialog.Builder()
                 .title(getString(R.string.warning))
                 .description(it.message ?: getString(R.string.response_error))
                 .cancelable(false)
                 .negative(getString(R.string.ok)) {
-                    onBackPressed()
+                    this.finish()
                 }
                 .build()
                 .show(supportFragmentManager, ActionDialog.TAG)
