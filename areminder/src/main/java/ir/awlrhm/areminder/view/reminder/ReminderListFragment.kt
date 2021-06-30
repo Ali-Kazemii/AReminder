@@ -5,15 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.areminder.view.base.BaseFragment
-import ir.awlrhm.modules.extentions.showFlashbar
+import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.yToast
 import ir.awlrhm.modules.view.ActionDialog
-import ir.awrhm.modules.enums.MessageStatus
 import kotlinx.android.synthetic.main.fragment_list_reminder.*
 import org.joda.time.DateTimeZone
 import org.joda.time.chrono.PersianChronologyKhayyam
@@ -64,7 +64,7 @@ class ReminderListFragment(
     }
 
     override fun handleObservers() {
-        viewModel.listUserActivity1.observe(viewLifecycleOwner, {
+        viewModel.listUserActivity1.observe(viewLifecycleOwner, Observer{
             it.result?.let { list ->
                 if (list.isNotEmpty()) {
                     loading.isVisible = false
@@ -101,7 +101,7 @@ class ReminderListFragment(
 
     override fun handleError() {
         val activity = activity ?: return
-        viewModel.errorEventList1.observe(this, {
+        viewModel.errorEventList1.observe(this, Observer{
             ActionDialog.Builder()
                 .title(getString(R.string.warning))
                 .description(it.message ?: getString(R.string.response_error))

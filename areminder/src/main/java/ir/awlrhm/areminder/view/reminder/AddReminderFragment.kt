@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.request.DeleteUserRequest
@@ -16,11 +17,11 @@ import ir.awlrhm.areminder.data.network.model.response.UserActivityInviteRespons
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.areminder.view.base.BaseFragment
+import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.*
 import ir.awlrhm.modules.models.ItemModel
 import ir.awlrhm.modules.view.ActionDialog
 import ir.awlrhm.modules.view.ChooseDialog
-import ir.awrhm.modules.enums.MessageStatus
 import kotlinx.android.synthetic.main.contain_add_reminder.*
 import kotlinx.android.synthetic.main.fragment_add_reminder.*
 
@@ -218,7 +219,7 @@ class AddReminderFragment(
     override fun handleObservers() {
         val activity = activity ?: return
 
-        viewModel.listReminderType.observe(viewLifecycleOwner, { response ->
+        viewModel.listReminderType.observe(viewLifecycleOwner,  Observer{ response ->
             if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 listReminderType = mutableListOf<ItemModel>().apply {
                     response.result?.forEachIndexed { index, result ->
@@ -234,7 +235,7 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listMeetingLocation.observe(viewLifecycleOwner, { response ->
+        viewModel.listMeetingLocation.observe(viewLifecycleOwner, Observer { response ->
             if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 showLoading(false)
                 listMeetingLocation = mutableListOf<ItemModel>().apply {
@@ -251,7 +252,7 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listCustomer.observe(viewLifecycleOwner, { response ->
+        viewModel.listCustomer.observe(viewLifecycleOwner,  Observer{ response ->
             if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 listCustomer = mutableListOf<ItemModel>().apply {
                     response.result?.forEachIndexed { index, result ->
@@ -267,7 +268,7 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listUserActivityInvite.observe(viewLifecycleOwner, { response ->
+        viewModel.listUserActivityInvite.observe(viewLifecycleOwner,  Observer{ response ->
             if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let {
                     it.forEach { item ->
@@ -277,30 +278,37 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.addSuccessful.observe(viewLifecycleOwner, {
+        viewModel.addSuccessful.observe(viewLifecycleOwner, Observer{response ->
             if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                showLoading(false)
-                activity.yToast(
-                    getString(R.string.success_operation),
-                    MessageStatus.SUCCESS
-                )
-                callback.invoke()
+                response.result?.let {
+                    if (it != 0L) {
+                        showLoading(false)
+                        activity.yToast(
+                            getString(R.string.success_operation),
+                            MessageStatus.SUCCESS
+                        )
+                        callback.invoke()
+                    }else
+                        activity.yToast(
+                            getString(R.string.failure_operation),
+                            MessageStatus.ERROR
+                        )
+                }
             }
         })
 
-        viewModel.addFailure.observe(viewLifecycleOwner, {
+        viewModel.addFailure.observe(viewLifecycleOwner,  Observer{
             if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 showLoading(false)
                 activity.showFlashbar(
                     getString(R.string.error),
-                    it.message ?: getString(R.string.failed_operation),
-                    false,
+                    it?.message ?: getString(R.string.failed_operation),
                     MessageStatus.ERROR
                 )
             }
         })
 
-        viewModel.responseBoolean.observe(viewLifecycleOwner, { response ->
+        viewModel.responseBoolean.observe(viewLifecycleOwner, Observer { response ->
             if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let {
                     if (it) {
@@ -403,7 +411,7 @@ class AddReminderFragment(
 
     override fun handleError() {
         val activity = activity ?: return
-        viewModel.error.observe(viewLifecycleOwner, {
+        viewModel.error.observe(viewLifecycleOwner,  Observer{
             ActionDialog.Builder()
                 .title(getString(R.string.warning))
                 .description(it.message ?: getString(R.string.response_error))

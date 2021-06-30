@@ -27,5 +27,7 @@
     <string name="choose_related_people">افراد مربوطه را انتخاب نمایید</string>
     <string name="no_item_exist">آیتمی وجود ندارد</string>
     <string name="wait">لطفا منتظر بمانید</string>
+    <string name="failure_operation">عملیات ناموفق بود</string>
+    <string name="success_operation">عملیات با موفقیت انجام شد</string>
 
 </resources>

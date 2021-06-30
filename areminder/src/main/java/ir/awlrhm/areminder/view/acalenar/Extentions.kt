@@ -1,4 +1,4 @@
-package ir.awlrhm.calendar
+package ir.awlrhm.areminder.view.acalenar
 
 fun getMonthName(mothOfYear: Int): String {
     return when (mothOfYear) {

@@ -73,7 +73,7 @@ dependencies {
     //date time
     implementation 'com.github.mohamadian:PersianJodaTime:1.2'
     //module
-    implementation 'com.github.AWLRHM:Module:1.8.7'
+    implementation 'com.github.AWLRHM:Module:1.8.10'
     //lottie
     implementation 'com.airbnb.android:lottie:3.6.1'
 }

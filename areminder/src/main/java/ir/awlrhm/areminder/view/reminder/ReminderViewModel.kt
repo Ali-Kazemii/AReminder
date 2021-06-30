@@ -25,7 +25,7 @@ class ReminderViewModel : ViewModel() {
     val errorEventList = MutableLiveData<BaseResponse>()
     val errorEventList1 = MutableLiveData<BaseResponse>()
     val addSuccessful = MutableLiveData<ResponseId>()
-    val addFailure = MutableLiveData<BaseResponse>()
+    val addFailure = MutableLiveData<BaseResponse?>()
     val listReminderType = MutableLiveData<ReminderTypeResponse>()
     val listMeetingLocation = MutableLiveData<MeetingLocationResponse>()
     val listCustomer = MutableLiveData<CustomerListResponse>()
@@ -192,7 +192,7 @@ class ReminderViewModel : ViewModel() {
                 }
 
                 override fun onError(response: BaseResponse?) {
-                    response?.let { addFailure.postValue(it) }
+                    addFailure.postValue(response)
                 }
             })
     }

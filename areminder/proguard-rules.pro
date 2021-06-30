@@ -40,7 +40,10 @@
 ## generic------------------------------------------------------------------------------------------
 -keep class ir.awlrhm.areminder.data.network.model.request.** { *; }
 -keep class ir.awlrhm.areminder.data.network.model.response.** { *; }
--keep class ir.awlrhm.areminder.utility.Const.**{ *; }
+-keep class ir.awlrhm.areminder.data.network.model.base.** { *; }
+-keep class ir.awlrhm.areminder.data.network.** { *; }
+-keep class ir.awlrhm.areminder.data.local.**{ *; }
+-keep class ir.awlrhm.areminder.utility.**{ *; }
 -keep class ir.awlrhm.areminder.view.acalenar.enums.**{ *; }
 -keep class ir.awlrhm.areminder.view.acalenar.model.**{ *; }
 -keep class ir.awlrhm.areminder.view.acalenar.animator.**{ *; }

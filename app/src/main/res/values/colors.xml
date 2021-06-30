@@ -8,8 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="colorPrimary">@color/grey_800</color><!--#560000-->
-    <color name="colorPrimaryDark">@color/grey_900</color><!--#3F0C0A-->
+    <color name="colorPrimary">@color/teal_200</color><!--#560000-->
+    <color name="colorPrimaryDark">@color/teal_800</color><!--#3F0C0A-->
 
-    <color name="icons">@color/white</color>
+    <color name="icons">@color/orange_A400</color>
 </resources>
