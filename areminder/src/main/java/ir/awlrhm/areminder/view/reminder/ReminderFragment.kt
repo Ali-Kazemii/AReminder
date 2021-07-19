@@ -72,6 +72,10 @@ class ReminderFragment(
 //        nestedScroll.parent.requestChildFocus(nestedScroll, nestedScroll)
         if(listEvents.isEmpty())
             btnShowEvents.isVisible = false
+
+        btnBack.setOnClickListener {
+            activity.onBackPressed()
+        }
     }
 
     override fun onCreateView(
