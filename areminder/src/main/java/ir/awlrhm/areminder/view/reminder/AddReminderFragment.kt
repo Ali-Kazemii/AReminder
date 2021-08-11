@@ -358,7 +358,7 @@ class AddReminderFragment(
     private fun addCustomer(model: ItemModel) {
         val activity = activity ?: return
         val view =
-            LayoutInflater.from(activity).inflate(R.layout.item_chip, chipGroup, false) as Chip
+            LayoutInflater.from(activity).inflate(R.layout.awlrhm_item_chip, chipGroup, false) as Chip
         view.text = model.title
         view.tag = model.id
         view.isCheckable = false
@@ -373,7 +373,7 @@ class AddReminderFragment(
     private fun initInviteCustomer(model: UserActivityInviteResponse.Result) {
         val activity = activity ?: return
         val view =
-            LayoutInflater.from(activity).inflate(R.layout.item_chip, chipGroup, false) as Chip
+            LayoutInflater.from(activity).inflate(R.layout.awlrhm_item_chip, chipGroup, false) as Chip
         view.text = model.name
         view.tag = model.customerId
         view.isCheckable = false

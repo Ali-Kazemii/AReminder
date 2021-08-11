@@ -12,6 +12,7 @@ import ir.awlrhm.reminder.network.api.ApiClient
 fun FragmentActivity.initialLoginViewModel(): LoginViewModel {
     val pref = PreferenceConfig(this)
     pref.hostName = Keys.HOST_NAME
+    pref.ssId = Keys.SSID
     val viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
     viewModel.init(
         RemoteRepository(

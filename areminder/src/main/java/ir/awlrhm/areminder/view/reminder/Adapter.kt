@@ -21,7 +21,7 @@ class Adapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_reminder, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.awlrhm_item_reminder, parent, false)
         return CustomViewHolder(view)
     }
 
