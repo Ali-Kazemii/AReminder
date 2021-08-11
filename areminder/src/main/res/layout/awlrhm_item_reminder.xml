@@ -17,7 +17,7 @@
             android:id="@+id/txtDayName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/teal_700"
+            android:textColor="@color/colorAccent"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/txtDayNumber"
             app:layout_constraintEnd_toEndOf="parent"
