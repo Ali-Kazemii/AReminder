@@ -9,7 +9,7 @@ import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.getDayName
 import ir.awlrhm.areminder.utility.getMonthName
-import kotlinx.android.synthetic.main.item_reminder.view.*
+import kotlinx.android.synthetic.main.awlrhm_item_reminder.view.*
 import org.joda.time.Chronology
 import org.joda.time.DateTime
 
