@@ -1,9 +1,9 @@
 package ir.awlrhm.areminder.data.network.model.request
 
 import com.google.gson.annotations.SerializedName
-import ir.awlrhm.areminder.data.network.model.base.BaseRequest
+import ir.awlrhm.areminder.data.network.model.base.BaseRequestReminder
 
-class UserActivityRequest: BaseRequest() {
+class UserActivityRequest: BaseRequestReminder() {
     @SerializedName("uttUserActivityInvite")
     var utt: String ?= null
 

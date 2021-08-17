@@ -3,7 +3,7 @@ package ir.awlrhm.reminder.network
 import android.content.Context
 import ir.awlrhm.reminder.network.api.ApiCallback
 import ir.awlrhm.reminder.network.api.ApiInterface
-import ir.awlrhm.areminder.data.network.model.base.BaseResponse
+import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
 import ir.awlrhm.reminder.network.model.request.LoginRequest
 import ir.awlrhm.reminder.network.model.response.LoginResponse
 import okhttp3.Headers
@@ -15,10 +15,10 @@ class RemoteRepository(
 
     interface OnApiCallback<Model> {
         fun onDataLoaded(data: Model)
-        fun onError(response: BaseResponse?)
+        fun onError(response: BaseResponseReminder?)
     }
 
-    private fun handleError(body: BaseResponse) {
+    private fun handleError(body: BaseResponseReminder) {
 //        when (body.statusDescription) {
 //            ErrorKey.AUTHORIZATION ->
 //        }
@@ -33,7 +33,7 @@ class RemoteRepository(
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponse?) {
+            override fun failure(response: BaseResponseReminder?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)

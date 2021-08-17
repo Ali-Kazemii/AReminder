@@ -1,9 +1,9 @@
 package ir.awlrhm.reminder.network.model.response
 
 import com.google.gson.annotations.SerializedName
-import ir.awlrhm.areminder.data.network.model.base.BaseResponse
+import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
 
-class LoginResponse: BaseResponse() {
+class LoginResponse: BaseResponseReminder() {
     @SerializedName("result")
     var result: Result?= null
 

@@ -2,7 +2,7 @@ package ir.awlrhm.reminder.login
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ir.awlrhm.areminder.data.network.model.base.BaseResponse
+import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
 import ir.awlrhm.reminder.network.PreferenceConfig
 import ir.awlrhm.reminder.network.RemoteRepository
 import ir.awlrhm.reminder.network.model.request.LoginRequest
@@ -11,7 +11,7 @@ import ir.awlrhm.reminder.network.model.response.LoginResponse
 class LoginViewModel: ViewModel() {
 
     val userLoginResponse = MutableLiveData<LoginResponse>()
-    val error = MutableLiveData<BaseResponse?>()
+    val error = MutableLiveData<BaseResponseReminder?>()
     private lateinit var remote: RemoteRepository
     private lateinit var pref: PreferenceConfig
 
@@ -67,7 +67,7 @@ class LoginViewModel: ViewModel() {
                     userLoginResponse.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     error.postValue(response)
                 }
             })

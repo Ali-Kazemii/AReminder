@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.RemoteRepository
-import ir.awlrhm.areminder.data.network.model.base.BaseResponse
+import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
 import ir.awlrhm.areminder.data.network.model.request.DeleteUserRequest
 import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
 import ir.awlrhm.areminder.data.network.model.response.*
@@ -18,14 +18,14 @@ class ReminderViewModel : ViewModel() {
     private lateinit var pref: PreferenceConfiguration
     private lateinit var calendar: PersianCalendar
 
-    val error = MutableLiveData<BaseResponse>()
-    val response = MutableLiveData<BaseResponse>()
+    val error = MutableLiveData<BaseResponseReminder>()
+    val response = MutableLiveData<BaseResponseReminder>()
     val responseBoolean = MutableLiveData<ResponseBoolean>()
 
-    val errorEventList = MutableLiveData<BaseResponse>()
-    val errorEventList1 = MutableLiveData<BaseResponse>()
+    val errorEventList = MutableLiveData<BaseResponseReminder>()
+    val errorEventList1 = MutableLiveData<BaseResponseReminder>()
     val addSuccessful = MutableLiveData<ResponseId>()
-    val addFailure = MutableLiveData<BaseResponse?>()
+    val addFailure = MutableLiveData<BaseResponseReminder?>()
     val listReminderType = MutableLiveData<ReminderTypeResponse>()
     val listMeetingLocation = MutableLiveData<MeetingLocationResponse>()
     val listCustomer = MutableLiveData<CustomerListResponse>()
@@ -104,7 +104,7 @@ class ReminderViewModel : ViewModel() {
                     listReminderType.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     response?.let { error.postValue(it) }
                 }
             }
@@ -118,7 +118,7 @@ class ReminderViewModel : ViewModel() {
                     listMeetingLocation.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     response?.let { error.postValue(it) }
                 }
             }
@@ -132,7 +132,7 @@ class ReminderViewModel : ViewModel() {
                     listCustomer.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     response?.let { error.postValue(it) }
                 }
             }
@@ -153,7 +153,7 @@ class ReminderViewModel : ViewModel() {
                     listUserActivity.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     response?.let { errorEventList.postValue(it) }
                 }
             }
@@ -174,7 +174,7 @@ class ReminderViewModel : ViewModel() {
                     listUserActivity1.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     response?.let { errorEventList1.postValue(it) }
                 }
             }
@@ -191,7 +191,7 @@ class ReminderViewModel : ViewModel() {
                     addSuccessful.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     addFailure.postValue(response)
                 }
             })
@@ -207,7 +207,7 @@ class ReminderViewModel : ViewModel() {
                     responseBoolean.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     response?.let { addFailure.postValue(it) }
                 }
             })
@@ -223,7 +223,7 @@ class ReminderViewModel : ViewModel() {
                     listUserActivityInvite.postValue(data)
                 }
 
-                override fun onError(response: BaseResponse?) {
+                override fun onError(response: BaseResponseReminder?) {
                     response?.let { addFailure.postValue(it) }
                 }
             })

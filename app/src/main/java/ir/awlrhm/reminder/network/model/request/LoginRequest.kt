@@ -1,7 +1,7 @@
 package ir.awlrhm.reminder.network.model.request
 
 import com.google.gson.annotations.SerializedName
-import ir.awlrhm.areminder.data.network.model.base.BaseRequest
+import ir.awlrhm.areminder.data.network.model.base.BaseRequestReminder
 
 data class LoginRequest(
     @SerializedName("userName")
@@ -9,4 +9,4 @@ data class LoginRequest(
 
     @SerializedName("password")
     var password: String? = null
-): BaseRequest()
+): BaseRequestReminder()

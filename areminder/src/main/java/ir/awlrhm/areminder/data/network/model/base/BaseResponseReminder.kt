@@ -2,7 +2,7 @@ package ir.awlrhm.areminder.data.network.model.base
 
 import com.google.gson.annotations.SerializedName
 
-open class BaseResponse {
+open class BaseResponseReminder {
     @SerializedName("status")
     var status: Boolean?= null
 
