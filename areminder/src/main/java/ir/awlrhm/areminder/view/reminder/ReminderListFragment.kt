@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.initialViewModel
-import ir.awlrhm.areminder.view.base.BaseFragment
+import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.yToast
 import ir.awlrhm.modules.view.ActionDialog
@@ -20,7 +20,7 @@ import org.joda.time.chrono.PersianChronologyKhayyam
 
 class ReminderListFragment(
     private val callback: OnActionListener
-) : BaseFragment() {
+) : BaseFragmentReminder() {
 
     private lateinit var viewModel: ReminderViewModel
 

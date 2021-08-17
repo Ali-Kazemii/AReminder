@@ -16,7 +16,7 @@ import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityInviteResponse
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utility.initialViewModel
-import ir.awlrhm.areminder.view.base.BaseFragment
+import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.*
 import ir.awlrhm.modules.models.ItemModel
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_add_reminder.*
 
 class AddReminderFragment(
     private val callback: () -> Unit
-) : BaseFragment() {
+) : BaseFragmentReminder() {
 
     constructor(
         model: UserActivityResponse.Result? = null,

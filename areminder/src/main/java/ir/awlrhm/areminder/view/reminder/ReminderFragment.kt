@@ -18,7 +18,7 @@ import ir.awlrhm.areminder.utility.initialViewModel
 import ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
 import ir.awlrhm.areminder.view.acalenar.enums.PersianCustomMarks
 import ir.awlrhm.areminder.view.acalenar.enums.PersianViewPagerType
-import ir.awlrhm.areminder.view.base.BaseFragment
+import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import kotlinx.android.synthetic.main.contain_reminder.*
 import kotlinx.android.synthetic.main.fragment_reminder.*
 import org.joda.time.Chronology
@@ -29,7 +29,7 @@ import org.joda.time.chrono.PersianChronologyKhayyam
 class ReminderFragment(
     private val listEvents: MutableList<UserActivityResponse.Result>,
     private val listener: OnActionListener
-) : BaseFragment(), PersianHorizontalCalendar.OnActionListener {
+) : BaseFragmentReminder(), PersianHorizontalCalendar.OnActionListener {
 
     private lateinit var viewModel: ReminderViewModel
     private var adapter: Adapter? = null

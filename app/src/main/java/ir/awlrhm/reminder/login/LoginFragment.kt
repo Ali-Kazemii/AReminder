@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import ir.awlrhm.areminder.view.base.BaseFragment
+import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.enums.Status
 import ir.awlrhm.modules.extentions.convertToEnglishDigits
@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginFragment(
     private val listener: OnActionListener
-) : BaseFragment(), OnStatusListener {
+) : BaseFragmentReminder(), OnStatusListener {
 
     private lateinit var viewModel: LoginViewModel
 
