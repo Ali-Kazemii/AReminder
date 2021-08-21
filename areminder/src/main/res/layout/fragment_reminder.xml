@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_back"
                 android:tint="@color/black"
-                android:background="@android:color/transparent"
+                android:background="@drawable/circle_black"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
