@@ -13,8 +13,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
-import ir.awlrhm.areminder.utility.getMonthName
-import ir.awlrhm.areminder.utility.initialViewModel
+import ir.awlrhm.areminder.utils.getMonthName
+import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
 import ir.awlrhm.areminder.view.acalenar.enums.PersianCustomMarks
 import ir.awlrhm.areminder.view.acalenar.enums.PersianViewPagerType
@@ -57,7 +57,9 @@ class ReminderFragment(
     override fun setup() {
         val activity = activity ?: return
 
-        viewModel = activity.initialViewModel()
+        viewModel = activity.initialViewModel{
+            (activity as ReminderActivity).handleError(it)
+        }
         Glide.with(this)
             .load(monthResource[getMonthIndex(now)])
             .apply(RequestOptions())

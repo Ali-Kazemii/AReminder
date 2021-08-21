@@ -29,5 +29,6 @@
     <string name="wait">لطفا منتظر بمانید</string>
     <string name="failure_operation">عملیات ناموفق بود</string>
     <string name="success_operation">عملیات با موفقیت انجام شد</string>
+    <string name="error_finish_time">زمان استفاده از برنامه به پایان رسیده... مجددا لاگین کنید</string>
 
 </resources>

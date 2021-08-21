@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ir.awlrhm.areminder.R
-import ir.awlrhm.areminder.utility.initialViewModel
+import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.modules.extentions.configBottomSheet
 import ir.awlrhm.modules.extentions.formatDate
 import ir.awlrhm.modules.extentions.showDateDialog
@@ -24,7 +24,9 @@ class FilterReminderBottomSheet(
         dialog.setContentView(view)
 
         activity.configBottomSheet(view, 1f)
-        viewModel = activity.initialViewModel()
+        viewModel = activity.initialViewModel{
+            (activity as ReminderActivity).handleError(it)
+        }
         setup(dialog)
     }
 

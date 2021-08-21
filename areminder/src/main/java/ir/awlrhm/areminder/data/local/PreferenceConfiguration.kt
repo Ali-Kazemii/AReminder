@@ -2,9 +2,9 @@ package ir.awlrhm.areminder.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
-import ir.awlrhm.areminder.utility.Const
-import ir.awlrhm.areminder.utility.Const.KEY_ACCESS_TOKEN
-import ir.awlrhm.areminder.utility.Const.KEY_PREFERENCE_NAME
+import ir.awlrhm.areminder.utils.Const
+import ir.awlrhm.areminder.utils.Const.KEY_ACCESS_TOKEN
+import ir.awlrhm.areminder.utils.Const.KEY_PREFERENCE_NAME
 
 class PreferenceConfiguration(
    private val context: Context

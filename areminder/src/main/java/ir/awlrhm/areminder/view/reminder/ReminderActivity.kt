@@ -7,16 +7,19 @@ import androidx.lifecycle.Observer
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
-import ir.awlrhm.areminder.utility.Const.KEY_ACCESS_TOKEN
-import ir.awlrhm.areminder.utility.Const.KEY_APP_VERSION
-import ir.awlrhm.areminder.utility.Const.KEY_DEVICE_MODEL
-import ir.awlrhm.areminder.utility.Const.KEY_HOST_NAME
-import ir.awlrhm.areminder.utility.Const.KEY_IMEI
-import ir.awlrhm.areminder.utility.Const.KEY_OS_VERSION
-import ir.awlrhm.areminder.utility.Const.KEY_SSID
-import ir.awlrhm.areminder.utility.initialViewModel
+import ir.awlrhm.areminder.utils.Const.KEY_ACCESS_TOKEN
+import ir.awlrhm.areminder.utils.Const.KEY_APP_VERSION
+import ir.awlrhm.areminder.utils.Const.KEY_DEVICE_MODEL
+import ir.awlrhm.areminder.utils.Const.KEY_HOST_NAME
+import ir.awlrhm.areminder.utils.Const.KEY_IMEI
+import ir.awlrhm.areminder.utils.Const.KEY_OS_VERSION
+import ir.awlrhm.areminder.utils.Const.KEY_SSID
+import ir.awlrhm.areminder.utils.ErrorKey
+import ir.awlrhm.areminder.utils.initialViewModel
+import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.addFragmentInActivity
 import ir.awlrhm.modules.extentions.replaceFragmentInActivity
+import ir.awlrhm.modules.extentions.yToast
 import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.activity_reminder.*
 
@@ -29,7 +32,7 @@ class ReminderActivity : AppCompatActivity() {
         setContentView(R.layout.activity_reminder)
 
         initialParams()
-        viewModel = initialViewModel()
+        viewModel = initialViewModel{handleError(it)}
         handleObservers()
         handleError()
         getEvents()
@@ -140,6 +143,18 @@ class ReminderActivity : AppCompatActivity() {
                 .build()
                 .show(supportFragmentManager, ActionDialog.TAG)
         })
+    }
+    fun handleError(error: Int?){
+        error?.let {
+            when(it){
+                ErrorKey.AUTHORIZATION -> {
+                    yToast(
+                        getString(R.string.error_finish_time),
+                        MessageStatus.ERROR
+                    )
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {

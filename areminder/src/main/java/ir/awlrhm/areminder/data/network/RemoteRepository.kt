@@ -11,7 +11,8 @@ import okhttp3.Headers
 
 class RemoteRepository(
     private val context: Context,
-    private val api: ApiInterface
+    private val api: ApiInterface,
+    private val callback: (Int?)-> Unit
 ) {
 
     interface OnApiCallback<Model> {
@@ -20,9 +21,7 @@ class RemoteRepository(
     }
 
     private fun handleError(body: BaseResponseReminder) {
-        when (body.statusDescription) {
-//            ErrorKey.AUTHORIZATION ->
-        }
+            callback.invoke(body.statusDescription)
     }
 
     fun getReminderType(

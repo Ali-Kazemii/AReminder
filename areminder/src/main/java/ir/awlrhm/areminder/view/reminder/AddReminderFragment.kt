@@ -15,7 +15,7 @@ import ir.awlrhm.areminder.data.network.model.request.UTTUserActivity
 import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityInviteResponse
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
-import ir.awlrhm.areminder.utility.initialViewModel
+import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.*
@@ -51,7 +51,9 @@ class AddReminderFragment(
     override fun setup() {
         val activity = activity ?: return
 
-        viewModel = activity.initialViewModel()
+        viewModel = activity.initialViewModel{
+            (activity as ReminderActivity).handleError(it)
+        }
 
         txtStartDate.text = viewModel.currentDate
         txtEndDate.text = viewModel.currentDate

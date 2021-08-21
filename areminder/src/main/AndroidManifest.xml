@@ -4,6 +4,7 @@
 
     <application
         android:supportsRtl="true">
-        <activity android:name=".view.reminder.ReminderActivity"/>
+        <activity android:name=".view.reminder.ReminderActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>
 </manifest>

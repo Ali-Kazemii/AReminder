@@ -3,6 +3,7 @@ package ir.awlrhm.reminder.login
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
+import ir.awlrhm.areminder.utils.Const
 import ir.awlrhm.reminder.network.PreferenceConfig
 import ir.awlrhm.reminder.network.RemoteRepository
 import ir.awlrhm.reminder.network.model.request.LoginRequest
@@ -19,6 +20,12 @@ class LoginViewModel: ViewModel() {
         get() = pref.accessToken
         set(value) {
             pref.accessToken = value
+        }
+
+    var ssId: Int
+        get() = pref.ssId
+        set(value) {
+            pref.ssId = value
         }
 
     var imei: String

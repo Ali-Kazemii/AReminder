@@ -3,7 +3,7 @@ package ir.awlrhm.reminder.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ir.awlrhm.areminder.utility.Const
+import ir.awlrhm.areminder.utils.Const
 import ir.awlrhm.areminder.view.reminder.ReminderActivity
 import ir.awlrhm.modules.device.getDeviceIMEI
 import ir.awlrhm.modules.device.getDeviceName
@@ -25,6 +25,7 @@ class LoginActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
 
         viewModel = initialLoginViewModel()
         checkPhoneStatePermission()
@@ -60,7 +61,7 @@ class LoginActivity: AppCompatActivity() {
                     val bundle = Bundle()
                     bundle.putString(Const.KEY_HOST_NAME, Keys.HOST_NAME)
                     bundle.putString(Const.KEY_ACCESS_TOKEN, token)
-                    bundle.putInt(Const.KEY_SSID, Keys.SSID)
+                    bundle.putInt(Const.KEY_SSID, viewModel.ssId)
                     bundle.putString(Const.KEY_IMEI, viewModel.imei)
                     bundle.putString(Const.KEY_DEVICE_MODEL, viewModel.deviceModel)
                     bundle.putString(Const.KEY_OS_VERSION, viewModel.osVersion)

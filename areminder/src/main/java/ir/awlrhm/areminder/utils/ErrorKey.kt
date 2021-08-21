@@ -1,4 +1,4 @@
-package ir.awlrhm.areminder.utility
+package ir.awlrhm.areminder.utils
 
 object ErrorKey {
     const val AUTHORIZATION = 401

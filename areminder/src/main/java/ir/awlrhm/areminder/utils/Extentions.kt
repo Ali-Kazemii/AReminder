@@ -1,4 +1,4 @@
-package ir.awlrhm.areminder.utility
+package ir.awlrhm.areminder.utils
 
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +41,9 @@ fun getMonthName(mothOfYear: Int): String {
 }
 
 
-fun FragmentActivity.initialViewModel(): ReminderViewModel{
+fun FragmentActivity.initialViewModel(
+    callback: (Int?) -> Unit
+): ReminderViewModel {
     val pref = PreferenceConfiguration(this)
     val viewModel = ViewModelProvider(this).get(ReminderViewModel::class.java)
     viewModel.init(
@@ -50,7 +52,10 @@ fun FragmentActivity.initialViewModel(): ReminderViewModel{
             ApiClient(
                 pref
             ).getInterface()
-        ),
+        )
+        {
+            callback.invoke(it)
+        },
         pref,
         PersianCalendar()
     )

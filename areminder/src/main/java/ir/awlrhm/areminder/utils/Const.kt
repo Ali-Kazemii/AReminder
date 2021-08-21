@@ -1,4 +1,4 @@
-package ir.awlrhm.areminder.utility
+package ir.awlrhm.areminder.utils
 
 object Const {
     const val KEY_PREFERENCE_NAME = "reminder"

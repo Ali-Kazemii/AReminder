@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.enums.Status
@@ -16,17 +18,31 @@ import ir.awlrhm.modules.extentions.showFlashbar
 import ir.awlrhm.modules.utils.OnStatusListener
 import ir.awlrhm.reminder.R
 import ir.awlrhm.reminder.initialLoginViewModel
+import ir.awlrhm.reminder.initialRemoteRepository
+import ir.awlrhm.reminder.network.PreferenceConfig
 import kotlinx.android.synthetic.main.fragment_login.*
+import java.security.Key
 
 class LoginFragment(
     private val listener: OnActionListener
 ) : BaseFragmentReminder(), OnStatusListener {
 
     private lateinit var viewModel: LoginViewModel
+    private lateinit var pref: PreferenceConfig
 
     override fun setup() {
         val activity = activity ?: return
-        viewModel = activity.initialLoginViewModel()
+        pref = PreferenceConfig(activity)
+        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+        when(pref.ssId){
+            Keys.SSID_SUPERVISORS -> rdbSupervisors.isChecked = true
+            Keys.SSID_MANAGERS -> rdbManagers.isChecked = true
+            Keys.SSID_CONTRACTORS -> rdbContractors.isChecked = true
+            Keys.SSID_WAREHOUSE -> rdbWarehouse.isChecked = true
+            Keys.SSID_ASSET_MANAGEMENT -> rdbAssetManagement.isChecked = true
+            Keys.SSID_VALUE_ENGINEERING -> rdbValueEngineering.isChecked = true
+           else -> rdbEmployee.isChecked = true
+        }
     }
 
 
@@ -39,8 +55,25 @@ class LoginFragment(
     }
 
     override fun handleOnClickListeners() {
+        val activity = activity ?: return
+
         btnLogin.setOnClickListener {
-            login()
+            if (pref.ssId == 0) {
+                Toast.makeText(activity, "پورتال را انتخاب کنید", Toast.LENGTH_LONG).show()
+            } else {
+                pref.ssId = when {
+                    rdbSupervisors.isChecked ->  Keys.SSID_SUPERVISORS
+                    rdbManagers.isChecked ->  Keys.SSID_MANAGERS
+                    rdbContractors.isChecked ->  Keys.SSID_CONTRACTORS
+                    rdbWarehouse.isChecked ->  Keys.SSID_WAREHOUSE
+                    rdbAssetManagement.isChecked ->  Keys.SSID_ASSET_MANAGEMENT
+                    rdbValueEngineering.isChecked ->  Keys.SSID_VALUE_ENGINEERING
+                    else ->  Keys.SSID_EMPLOYEE //rdbEmployee.isChecked
+                }
+
+                activity.initialRemoteRepository(pref, viewModel)
+                login()
+            }
         }
     }
 
@@ -62,13 +95,13 @@ class LoginFragment(
     }
 
     override fun handleObservers() {
-
-        viewModel.userLoginResponse.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.userLoginResponse.observe(viewLifecycleOwner, { response ->
+            prcLogin.isVisible = false
             if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let { result ->
                     result.accessToken?.let { token ->
                         viewModel.accessToken = token
-                        listener.onToken(token)
+                        listener.onToken(token, )
                     }
                 }
             }
