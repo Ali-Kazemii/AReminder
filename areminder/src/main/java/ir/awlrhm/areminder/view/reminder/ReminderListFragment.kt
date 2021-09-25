@@ -8,8 +8,10 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import ir.awlrhm.areminder.R
+import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utils.initialViewModel
+import ir.awlrhm.areminder.utils.userActivityListJson
 import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.yToast
@@ -46,7 +48,18 @@ class ReminderListFragment(
         super.onResume()
         if (!loading.isVisible)
             loading.isVisible = true
-        viewModel.getUserActivityList1()
+        viewModel.getUserActivityList1(
+            UserActivityRequest().also { request ->
+                request.userId = viewModel.userId
+                request.financialYearId = viewModel.financialYear
+                request.typeOperation = 101
+                request.jsonParameters = userActivityListJson(
+                    "",
+                    "",
+                    0
+                )
+            }
+        )
     }
 
     override fun handleOnClickListeners() {
@@ -60,7 +73,18 @@ class ReminderListFragment(
         btnFilter.setOnClickListener {
             FilterReminderBottomSheet { start, end ->
                 loading.isVisible = true
-                viewModel.getUserActivityList1(0, start, end)
+                viewModel.getUserActivityList1(
+                    UserActivityRequest().also { request ->
+                        request.userId = viewModel.userId
+                        request.financialYearId = viewModel.financialYear
+                        request.typeOperation = 101
+                        request.jsonParameters = userActivityListJson(
+                            start,
+                            end,
+                            0
+                        )
+                    }
+                )
             }.show(activity.supportFragmentManager, FilterReminderBottomSheet.TAG)
         }
     }

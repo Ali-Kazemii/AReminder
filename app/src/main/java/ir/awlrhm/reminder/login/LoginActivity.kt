@@ -66,6 +66,7 @@ class LoginActivity: AppCompatActivity() {
                     bundle.putString(Const.KEY_DEVICE_MODEL, viewModel.deviceModel)
                     bundle.putString(Const.KEY_OS_VERSION, viewModel.osVersion)
                     bundle.putString(Const.KEY_APP_VERSION, viewModel.appVersion)
+                    bundle.putLong(Const.KEY_USER_ID, viewModel.userId)
                     intent.putExtras(bundle)
                     startActivity(intent)
                 }

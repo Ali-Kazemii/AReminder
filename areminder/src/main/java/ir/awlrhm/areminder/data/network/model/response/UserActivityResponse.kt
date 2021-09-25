@@ -11,7 +11,7 @@ class UserActivityResponse: BaseResponseReminder() {
         @SerializedName("tbL_UaID")
         val uaId: Long?= null
 
-        @SerializedName("activityType")
+        @SerializedName("tbL_BaseTitle")
         val activityType: String?= null
 
         @SerializedName("tbL_ActivityTypeID_fk")
@@ -48,7 +48,7 @@ class UserActivityResponse: BaseResponseReminder() {
         val note: String?= null
 
         @SerializedName("tbL_UaRegisterDate")
-        val registerDate: String?= null
+        var registerDate: String?= null
 
         @SerializedName("editMessage")
         val editMessage: String?= null

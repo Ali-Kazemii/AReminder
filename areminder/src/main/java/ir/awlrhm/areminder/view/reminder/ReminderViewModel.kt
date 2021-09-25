@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.RemoteRepository
 import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
-import ir.awlrhm.areminder.data.network.model.request.DeleteUserRequest
-import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
+import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.*
 import ir.awlrhm.modules.extentions.formatDate
 import ir.awlrhm.modules.extentions.formatTime
@@ -24,7 +23,7 @@ class ReminderViewModel : ViewModel() {
 
     val errorEventList = MutableLiveData<BaseResponseReminder>()
     val errorEventList1 = MutableLiveData<BaseResponseReminder>()
-    val addSuccessful = MutableLiveData<ResponseId>()
+    val responseId = MutableLiveData<ResponseId>()
     val addFailure = MutableLiveData<BaseResponseReminder?>()
     val listReminderType = MutableLiveData<ReminderTypeResponse>()
     val listMeetingLocation = MutableLiveData<MeetingLocationResponse>()
@@ -73,6 +72,12 @@ class ReminderViewModel : ViewModel() {
             pref.ssId = value
         }
 
+    var userId: Long
+        get() = pref.userId
+        set(value) {
+            pref.userId = value
+        }
+
     var imei: String
         get() = pref.imei
         set(value) {
@@ -97,8 +102,11 @@ class ReminderViewModel : ViewModel() {
             pref.deviceModel = value
         }
 
-    fun getReminderType() {
+    fun getReminderType(
+        request: ActivityTypeListRequest
+    ) {
         remote.getReminderType(
+            request,
             object : RemoteRepository.OnApiCallback<ReminderTypeResponse> {
                 override fun onDataLoaded(data: ReminderTypeResponse) {
                     listReminderType.postValue(data)
@@ -111,8 +119,11 @@ class ReminderViewModel : ViewModel() {
         )
     }
 
-    fun getMeetingLocationList() {
+    fun getMeetingLocationList(
+        request: MeetingLocationRequest
+    ) {
         remote.getMeetingLocationList(
+            request,
             object : RemoteRepository.OnApiCallback<MeetingLocationResponse> {
                 override fun onDataLoaded(data: MeetingLocationResponse) {
                     listMeetingLocation.postValue(data)
@@ -125,8 +136,11 @@ class ReminderViewModel : ViewModel() {
         )
     }
 
-    fun getCustomerList() {
+    fun getCustomerList(
+        request: CustomerListRequest
+    ) {
         remote.getCustomerList(
+            request,
             object : RemoteRepository.OnApiCallback<CustomerListResponse> {
                 override fun onDataLoaded(data: CustomerListResponse) {
                     listCustomer.postValue(data)
@@ -140,14 +154,10 @@ class ReminderViewModel : ViewModel() {
     }
 
     fun getUserActivityList(
-        activityTypeId: Long = 0,
-        startDate: String = "",
-        endDate: String = ""
+        request: UserActivityRequest
     ) {
         remote.getUserActivityList(
-            activityTypeId,
-            startDate,
-            endDate,
+           request,
             object : RemoteRepository.OnApiCallback<UserActivityResponse> {
                 override fun onDataLoaded(data: UserActivityResponse) {
                     listUserActivity.postValue(data)
@@ -161,14 +171,10 @@ class ReminderViewModel : ViewModel() {
     }
 
     fun getUserActivityList1(
-        activityTypeId: Long = 0,
-        startDate: String = "",
-        endDate: String = ""
+       request: UserActivityRequest
     ) {
         remote.getUserActivityList(
-            activityTypeId,
-            startDate,
-            endDate,
+            request,
             object : RemoteRepository.OnApiCallback<UserActivityResponse> {
                 override fun onDataLoaded(data: UserActivityResponse) {
                     listUserActivity1.postValue(data)
@@ -181,14 +187,30 @@ class ReminderViewModel : ViewModel() {
         )
     }
 
-    fun postUserActivityWithUtt(
-        request: UserActivityRequest
+    fun insertUserActivityWithUtt(
+        request: PostUserActivityRequest
     ) {
         remote.postUserActivityWithUtt(
             request,
             object : RemoteRepository.OnApiCallback<ResponseId> {
                 override fun onDataLoaded(data: ResponseId) {
-                    addSuccessful.postValue(data)
+                    responseId.postValue(data)
+                }
+
+                override fun onError(response: BaseResponseReminder?) {
+                    addFailure.postValue(response)
+                }
+            })
+    }
+
+    fun updateUserActivityWithUtt(
+        request: PostUserActivityRequest
+    ) {
+        remote.updateUserActivityWithUtt(
+            request,
+            object : RemoteRepository.OnApiCallback<ResponseId> {
+                override fun onDataLoaded(data: ResponseId) {
+                    responseId.postValue(data)
                 }
 
                 override fun onError(response: BaseResponseReminder?) {
@@ -202,9 +224,9 @@ class ReminderViewModel : ViewModel() {
     ) {
         remote.deleteUserActivity(
             request,
-            object : RemoteRepository.OnApiCallback<ResponseBoolean> {
-                override fun onDataLoaded(data: ResponseBoolean) {
-                    responseBoolean.postValue(data)
+            object : RemoteRepository.OnApiCallback<ResponseId> {
+                override fun onDataLoaded(data: ResponseId) {
+                    responseId.postValue(data)
                 }
 
                 override fun onError(response: BaseResponseReminder?) {
@@ -214,10 +236,10 @@ class ReminderViewModel : ViewModel() {
     }
 
     fun getUserActivityInviteList(
-        uaId: Long
+        request: UserActivityInviteRequest
     ) {
         remote.getUserActivityInviteList(
-            uaId,
+            request,
             object : RemoteRepository.OnApiCallback<UserActivityInviteResponse> {
                 override fun onDataLoaded(data: UserActivityInviteResponse) {
                     listUserActivityInvite.postValue(data)

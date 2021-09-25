@@ -3,9 +3,9 @@ package ir.awlrhm.areminder.view.reminder
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
+import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utils.Const.KEY_ACCESS_TOKEN
 import ir.awlrhm.areminder.utils.Const.KEY_APP_VERSION
@@ -14,8 +14,10 @@ import ir.awlrhm.areminder.utils.Const.KEY_HOST_NAME
 import ir.awlrhm.areminder.utils.Const.KEY_IMEI
 import ir.awlrhm.areminder.utils.Const.KEY_OS_VERSION
 import ir.awlrhm.areminder.utils.Const.KEY_SSID
+import ir.awlrhm.areminder.utils.Const.KEY_USER_ID
 import ir.awlrhm.areminder.utils.ErrorKey
 import ir.awlrhm.areminder.utils.initialViewModel
+import ir.awlrhm.areminder.utils.userActivityListJson
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.addFragmentInActivity
 import ir.awlrhm.modules.extentions.replaceFragmentInActivity
@@ -49,6 +51,8 @@ class ReminderActivity : AppCompatActivity() {
             pref.appVersion = intent.extras?.getString(KEY_APP_VERSION) ?: ""
             pref.deviceModel = intent.extras?.getString(KEY_DEVICE_MODEL) ?: ""
             pref.osVersion = intent.extras?.getString(KEY_OS_VERSION) ?: ""
+            pref.userId = intent.extras?.getLong(KEY_USER_ID) ?: 0
+
         } ?: kotlin.run {
             onBackPressed()
         }
@@ -57,11 +61,22 @@ class ReminderActivity : AppCompatActivity() {
     private fun getEvents() {
         if (!loading.isVisible)
             loading.isVisible = true
-        viewModel.getUserActivityList()
+        viewModel.getUserActivityList(
+            UserActivityRequest().also { request ->
+                request.userId = viewModel.userId
+                request.financialYearId = viewModel.financialYear
+                request.typeOperation = 101
+                request.jsonParameters = userActivityListJson(
+                    "",
+                    "",
+                    0
+                )
+            }
+        )
     }
 
     private fun handleObservers() {
-        viewModel.listUserActivity.observe(this, Observer{
+        viewModel.listUserActivity.observe(this, {
             it.result?.let { list ->
                 if (loading.isVisible)
                     loading.isVisible = false
@@ -132,7 +147,7 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun handleError() {
-        viewModel.errorEventList.observe(this, Observer{
+        viewModel.errorEventList.observe(this, {
             ActionDialog.Builder()
                 .title(getString(R.string.warning))
                 .description(it.message ?: getString(R.string.response_error))

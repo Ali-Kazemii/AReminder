@@ -6,7 +6,7 @@ import ir.awlrhm.areminder.data.network.model.base.BaseGetRequestReminder
 /**
  * Created by Ali_Kazemi on 25/09/2021.
  */
-class UserActivityRequest: BaseGetRequestReminder() {
-    @SerializedName("tbL_UaID")
-    var uaId: Long? = 0
+class ActivityTypeListRequest: BaseGetRequestReminder() {
+    @SerializedName("tbL_BaseID")
+    var baseId: Long?= 0
 }

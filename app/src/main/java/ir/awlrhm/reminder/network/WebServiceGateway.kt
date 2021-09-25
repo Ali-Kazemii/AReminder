@@ -28,22 +28,20 @@ class WebServiceGateway(
                 logging.level = HttpLoggingInterceptor.Level.BODY
                 addInterceptor(logging)
 
-                addInterceptor(object : Interceptor {
-                    override fun intercept(chain: Interceptor.Chain): Response {
-                        val newRequest = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer ${pref.accessToken}")
-                            .addHeader("IMEI", pref.imei)
-                            .addHeader("OS_VERSION", pref.osVersion)
-                            .addHeader("DEVICE_MODEL", pref.deviceModel)
-                            .addHeader("APP_VERSION_CODE", pref.appVersion)
-                            .addHeader("SSID", "${pref.ssId}")
-                            .addHeader("OS_TYPE", "android")
-                            .addHeader("MAC_ADDRESS", "0")
-                            .addHeader("IP_ADDRESS", "0")
-                            .addHeader("COMPUTER_NAME", "0")
-                            .build()
-                        return chain.proceed(newRequest)
-                    }
+                addInterceptor(Interceptor { chain ->
+                    val newRequest = chain.request().newBuilder()
+                        .addHeader("Authorization", "Bearer ${pref.accessToken}")
+                        .addHeader("IMEI", pref.imei)
+                        .addHeader("OS_VERSION", pref.osVersion)
+                        .addHeader("DEVICE_MODEL", pref.deviceModel)
+                        .addHeader("APP_VERSION_CODE", pref.appVersion)
+                        .addHeader("SSID", "${pref.ssId}")
+                        .addHeader("OS_TYPE", "android")
+                        .addHeader("MAC_ADDRESS", "0")
+                        .addHeader("IP_ADDRESS", "0")
+                        .addHeader("COMPUTER_NAME", "0")
+                        .build()
+                    chain.proceed(newRequest)
                 })
 
             }.build()

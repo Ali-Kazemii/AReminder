@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import ir.awlrhm.areminder.utils.Const
 import ir.awlrhm.areminder.utils.Const.KEY_ACCESS_TOKEN
 import ir.awlrhm.areminder.utils.Const.KEY_PREFERENCE_NAME
+import ir.awlrhm.areminder.utils.Const.KEY_USER_ID
 
 class PreferenceConfig(
    private val context: Context
@@ -45,6 +46,13 @@ class PreferenceConfig(
         get() = pref.getInt(Const.KEY_SSID, 0)
         set(value) {
             pref.edit().putInt(Const.KEY_SSID, value).apply()
+        }
+
+
+    var userId: Long
+        get() = pref.getLong(KEY_USER_ID, 0)
+        set(value) {
+            pref.edit().putLong(KEY_USER_ID, value).apply()
         }
 
     var hostName: String

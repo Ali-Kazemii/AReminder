@@ -8,7 +8,7 @@ import retrofit2.http.POST
 
 interface ApiInterface {
 
-    @POST("Authenticate/AuthenticateAdvanced")
+    @POST("Authenticate/Authentication")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
 
 }

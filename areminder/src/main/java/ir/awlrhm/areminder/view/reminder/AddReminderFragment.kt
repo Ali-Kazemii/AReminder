@@ -7,15 +7,14 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
 import ir.awlrhm.areminder.R
-import ir.awlrhm.areminder.data.network.model.request.DeleteUserRequest
-import ir.awlrhm.areminder.data.network.model.request.UTTUserActivity
-import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
+import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.UserActivityInviteResponse
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
+import ir.awlrhm.areminder.utils.customerJson
 import ir.awlrhm.areminder.utils.initialViewModel
+import ir.awlrhm.areminder.utils.userActivityInviteJson
 import ir.awlrhm.areminder.view.base.BaseFragmentReminder
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.*
@@ -47,11 +46,13 @@ class AddReminderFragment(
     private var _uaId: Long = 0
     private var addPerson = false
 
+    private var isOnEditMode: Boolean = false
+
 
     override fun setup() {
         val activity = activity ?: return
 
-        viewModel = activity.initialViewModel{
+        viewModel = activity.initialViewModel {
             (activity as ReminderActivity).handleError(it)
         }
 
@@ -68,8 +69,18 @@ class AddReminderFragment(
         getCustomerList()
 
         model?.let { model ->
+            isOnEditMode = true
+
             _uaId = model.uaId ?: 0
-            viewModel.getUserActivityInviteList(model.uaId ?: 0)
+            viewModel.getUserActivityInviteList(
+                UserActivityInviteRequest().also { request ->
+                    request.uaiId = model.uaId ?: 0
+                    request.userId = viewModel.userId
+                    request.typeOperation = 101
+                    request.jsonParameters = userActivityInviteJson(model.uaId ?: 0)
+                }
+            )
+
             txtStartDate.text = model.startDate
             txtStartTime.text = model.startTime
             txtEndDate.text = model.endDate
@@ -104,8 +115,11 @@ class AddReminderFragment(
                 .positive(getString(R.string.ok)) {
                     showLoading(true)
                     viewModel.deleteUserActivity(
-                        DeleteUserRequest().apply {
-                            this.uaId = model?.uaId
+                        DeleteUserRequest().also { request->
+                            request.uaId = model?.uaId
+                            request.ssId = viewModel.ssId
+                            request.financialYearId = viewModel.financialYear
+                            request.userId = viewModel.userId
                         }
                     )
                 }
@@ -116,7 +130,11 @@ class AddReminderFragment(
         btnSave.setOnClickListener {
             if (isValid) {
                 showLoading(true)
-                postUserActivity()
+                if (isOnEditMode)
+                    viewModel.updateUserActivityWithUtt(request)
+                else
+                    viewModel.insertUserActivityWithUtt(request)
+
             } else {
                 showLoading(false)
                 activity.hideKeyboard(edtReminderTitle)
@@ -124,18 +142,18 @@ class AddReminderFragment(
                     getString(R.string.fill_all_blanks),
                     MessageStatus.ERROR
                 )
-                if(!addPerson)
+                if (!addPerson)
                     txtAddPeople.isVisible = true
 
-                if(edtReminderTitle.text.toString().isEmpty())
+                if (edtReminderTitle.text.toString().isEmpty())
                     edtReminderTitle.error = getString(R.string.fill_event_title)
 
-                if(reminderTypeId == -1L){
+                if (reminderTypeId == -1L) {
                     txtEventType.setTextColor(ContextCompat.getColor(activity, R.color.red_500))
                     txtEventType.text = getString(R.string.choose_event_type)
                 }
 
-                if(meetingLocationId == -1L){
+                if (meetingLocationId == -1L) {
                     txtLocation.setTextColor(ContextCompat.getColor(activity, R.color.red_500))
                     txtLocation.text = getString(R.string.choose_location)
                 }
@@ -183,32 +201,36 @@ class AddReminderFragment(
         }
     }
 
-    private fun postUserActivity() {
-        viewModel.postUserActivityWithUtt(
-            UserActivityRequest().apply {
-                this.uaId = _uaId
-                this.activityTypeId = reminderTypeId
-                this.title = edtReminderTitle.text.toString()
-                this.startDate = txtStartDate.text.toString()
-                this.endDate = txtEndDate.text.toString()
-                this.startTime = txtStartTime.text.toString()
-                this.endTime = txtEndTime.text.toString()
-                this.locationId = meetingLocationId
-                this.alarmDate = txtReminderDate.text.toString()
-                this.alarmTime = txtReminderTime.text.toString()
-                this.utt = convertUTTModelToJson(uttList)
+    private val request: PostUserActivityRequest
+        get() {
+            return PostUserActivityRequest().also { request ->
+                request.uaId = _uaId
+                request.activityTypeId = reminderTypeId
+                request.title = edtReminderTitle.text.toString()
+                request.startDate = txtStartDate.text.toString()
+                request.endDate = txtEndDate.text.toString()
+                request.startTime = txtStartTime.text.toString()
+                request.endTime = txtEndTime.text.toString()
+                request.locationId = meetingLocationId
+                request.alarmDate = txtReminderDate.text.toString()
+                request.alarmTime = txtReminderTime.text.toString()
+                request.financialYearId = viewModel.financialYear
+                request.userId = viewModel.userId
+                request.ssId = viewModel.ssId
+                request.registerDate = viewModel.currentDate
+                request.utt = convertUTTModelToJson(uttList)
             }
-        )
-    }
+        }
+
 
     private val uttList: MutableList<UTTUserActivity>
         get() {
             val list = mutableListOf<UTTUserActivity>()
             for (i in 1 until chipGroup.childCount)
                 list.add(
-                    UTTUserActivity().apply {
-                        this.customerId = chipGroup.getChildAt(i).tag as Long
-                        this.financialYearId = viewModel.financialYear
+                    UTTUserActivity().also { request ->
+                        request.customerId = chipGroup.getChildAt(i).tag as Long
+                        request.financialYearId = viewModel.financialYear
                     }
                 )
             return list
@@ -221,8 +243,8 @@ class AddReminderFragment(
     override fun handleObservers() {
         val activity = activity ?: return
 
-        viewModel.listReminderType.observe(viewLifecycleOwner,  Observer{ response ->
-            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+        viewModel.listReminderType.observe(viewLifecycleOwner, { response ->
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 listReminderType = mutableListOf<ItemModel>().apply {
                     response.result?.forEachIndexed { index, result ->
                         add(
@@ -237,8 +259,8 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listMeetingLocation.observe(viewLifecycleOwner, Observer { response ->
-            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+        viewModel.listMeetingLocation.observe(viewLifecycleOwner, { response ->
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 showLoading(false)
                 listMeetingLocation = mutableListOf<ItemModel>().apply {
                     response.result?.forEachIndexed { index, result ->
@@ -254,8 +276,8 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listCustomer.observe(viewLifecycleOwner,  Observer{ response ->
-            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+        viewModel.listCustomer.observe(viewLifecycleOwner, { response ->
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 listCustomer = mutableListOf<ItemModel>().apply {
                     response.result?.forEachIndexed { index, result ->
                         add(
@@ -270,8 +292,8 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listUserActivityInvite.observe(viewLifecycleOwner,  Observer{ response ->
-            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+        viewModel.listUserActivityInvite.observe(viewLifecycleOwner, { response ->
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let {
                     it.forEach { item ->
                         initInviteCustomer(item)
@@ -280,27 +302,21 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.addSuccessful.observe(viewLifecycleOwner, Observer{response ->
-            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+        viewModel.responseId.observe(viewLifecycleOwner, { response ->
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let {
                     if (it != 0L) {
-                        showLoading(false)
-                        activity.yToast(
-                            getString(R.string.success_operation),
-                            MessageStatus.SUCCESS
-                        )
-                        callback.invoke()
-                    }else
-                        activity.yToast(
-                            getString(R.string.failure_operation),
-                            MessageStatus.ERROR
-                        )
+                        activity.successOperation(response.message)
+                        activity.onBackPressed()
+
+                    } else
+                        activity.showError(response.message)
                 }
             }
         })
 
-        viewModel.addFailure.observe(viewLifecycleOwner,  Observer{
-            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+        viewModel.addFailure.observe(viewLifecycleOwner, {
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 showLoading(false)
                 activity.showFlashbar(
                     getString(R.string.error),
@@ -310,8 +326,8 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.responseBoolean.observe(viewLifecycleOwner, Observer { response ->
-            if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+        viewModel.responseBoolean.observe(viewLifecycleOwner, { response ->
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let {
                     if (it) {
                         activity.yToast(
@@ -329,7 +345,12 @@ class AddReminderFragment(
         if (listMeetingLocation.size > 0)
             showLocationList()
         else
-            viewModel.getMeetingLocationList()
+            viewModel.getMeetingLocationList(
+                MeetingLocationRequest().also { request ->
+                    request.userId = viewModel.userId
+                    request.typeOperation = 15
+                }
+            )
     }
 
     private fun showLocationList() {
@@ -346,7 +367,13 @@ class AddReminderFragment(
         if (listCustomer.size > 0)
             showCustomerList()
         else
-            viewModel.getCustomerList()
+            viewModel.getCustomerList(
+                CustomerListRequest().also { request ->
+                    request.userId = viewModel.userId
+                    request.typeOperation = 20
+                    request.jsonParameters = customerJson("")
+                }
+            )
     }
 
     private fun showCustomerList() {
@@ -360,7 +387,8 @@ class AddReminderFragment(
     private fun addCustomer(model: ItemModel) {
         val activity = activity ?: return
         val view =
-            LayoutInflater.from(activity).inflate(R.layout.awlrhm_item_chip, chipGroup, false) as Chip
+            LayoutInflater.from(activity)
+                .inflate(R.layout.awlrhm_item_chip, chipGroup, false) as Chip
         view.text = model.title
         view.tag = model.id
         view.isCheckable = false
@@ -375,13 +403,15 @@ class AddReminderFragment(
     private fun initInviteCustomer(model: UserActivityInviteResponse.Result) {
         val activity = activity ?: return
         val view =
-            LayoutInflater.from(activity).inflate(R.layout.awlrhm_item_chip, chipGroup, false) as Chip
+            LayoutInflater.from(activity)
+                .inflate(R.layout.awlrhm_item_chip, chipGroup, false) as Chip
         view.text = model.name
         view.tag = model.customerId
         view.isCheckable = false
         view.setOnClickListener {
             chipGroup.removeViewAt(chipGroup.indexOfChild(view))
         }
+        addPerson = true
         chipGroup.addView(view)
     }
 
@@ -389,7 +419,12 @@ class AddReminderFragment(
         if (listReminderType.size > 0)
             showReminderTypeList()
         else
-            viewModel.getReminderType()
+            viewModel.getReminderType(
+                ActivityTypeListRequest().also { request ->
+                    request.userId = viewModel.userId
+                    request.typeOperation = 16
+                }
+            )
     }
 
     private fun showReminderTypeList() {
@@ -413,7 +448,7 @@ class AddReminderFragment(
 
     override fun handleError() {
         val activity = activity ?: return
-        viewModel.error.observe(viewLifecycleOwner,  Observer{
+        viewModel.error.observe(viewLifecycleOwner, {
             ActionDialog.Builder()
                 .title(getString(R.string.warning))
                 .description(it.message ?: getString(R.string.response_error))
@@ -425,7 +460,6 @@ class AddReminderFragment(
                 .show(activity.supportFragmentManager, ActionDialog.TAG)
         })
     }
-
 
 
     companion object {

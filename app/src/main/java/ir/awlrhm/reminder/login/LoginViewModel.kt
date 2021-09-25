@@ -28,6 +28,11 @@ class LoginViewModel: ViewModel() {
             pref.ssId = value
         }
 
+    var userId: Long
+        get() = pref.userId
+        set(value) {
+            pref.userId = value
+        }
     var imei: String
         get() = pref.imei
         set(value) {

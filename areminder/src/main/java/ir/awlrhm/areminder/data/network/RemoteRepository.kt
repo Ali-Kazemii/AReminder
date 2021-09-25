@@ -4,8 +4,7 @@ import android.content.Context
 import ir.awlrhm.areminder.data.network.api.ApiCallback
 import ir.awlrhm.areminder.data.network.api.ApiInterface
 import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
-import ir.awlrhm.areminder.data.network.model.request.DeleteUserRequest
-import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
+import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.*
 import okhttp3.Headers
 
@@ -25,9 +24,10 @@ class RemoteRepository(
     }
 
     fun getReminderType(
+        request: ActivityTypeListRequest,
         callback: OnApiCallback<ReminderTypeResponse>
     ) {
-        val call = api.getReminderType()
+        val call = api.getReminderType(request)
         call.enqueue(object : ApiCallback<ReminderTypeResponse>(context) {
             override fun response(response: ReminderTypeResponse, headers: Headers) {
                 callback.onDataLoaded(response)
@@ -45,9 +45,10 @@ class RemoteRepository(
     }
 
     fun getMeetingLocationList(
+        request: MeetingLocationRequest,
         callback: OnApiCallback<MeetingLocationResponse>
     ) {
-        val call = api.getMeetingLocationList()
+        val call = api.getMeetingLocationList(request)
         call.enqueue(object : ApiCallback<MeetingLocationResponse>(context) {
             override fun response(response: MeetingLocationResponse, headers: Headers) {
                 callback.onDataLoaded(response)
@@ -65,9 +66,10 @@ class RemoteRepository(
     }
 
     fun getCustomerList(
+        request: CustomerListRequest,
         callback: OnApiCallback<CustomerListResponse>
     ) {
-        val call = api.getCustomerList()
+        val call = api.getCustomerList(request)
         call.enqueue(object : ApiCallback<CustomerListResponse>(context) {
             override fun response(response: CustomerListResponse, headers: Headers) {
                 callback.onDataLoaded(response)
@@ -85,15 +87,11 @@ class RemoteRepository(
     }
 
     fun getUserActivityList(
-        activityTypeId: Long,
-        startDate: String,
-        endDate: String,
+        request: UserActivityRequest,
         callback: OnApiCallback<UserActivityResponse>
     ) {
         val call = api.getUserActivityList(
-            activityTypeId,
-            startDate,
-            endDate
+            request
         )
         call.enqueue(object : ApiCallback<UserActivityResponse>(context) {
             override fun response(response: UserActivityResponse, headers: Headers) {
@@ -112,7 +110,7 @@ class RemoteRepository(
     }
 
     fun postUserActivityWithUtt(
-        request: UserActivityRequest,
+        request: PostUserActivityRequest,
         callback: OnApiCallback<ResponseId>
     ) {
         val call = api.postUserActivityWithUtt(request)
@@ -132,13 +130,34 @@ class RemoteRepository(
         })
     }
 
+    fun updateUserActivityWithUtt(
+        request: PostUserActivityRequest,
+        callback: OnApiCallback<ResponseId>
+    ) {
+        val call = api.updateUserActivityWithUtt(request)
+        call.enqueue(object : ApiCallback<ResponseId>(context) {
+            override fun response(response: ResponseId, headers: Headers) {
+                callback.onDataLoaded(response)
+            }
+
+            override fun failure(response: BaseResponseReminder?) {
+                response?.let {
+                    handleError(it)
+                    callback.onError(response)
+                } ?: kotlin.run {
+                    callback.onError(response)
+                }
+            }
+        })
+    }
+
     fun deleteUserActivity(
         request: DeleteUserRequest,
-        callback: OnApiCallback<ResponseBoolean>
+        callback: OnApiCallback<ResponseId>
     ) {
         val call = api.deleteUserActivity(request)
-        call.enqueue(object : ApiCallback<ResponseBoolean>(context) {
-            override fun response(response: ResponseBoolean, headers: Headers) {
+        call.enqueue(object : ApiCallback<ResponseId>(context) {
+            override fun response(response: ResponseId, headers: Headers) {
                 callback.onDataLoaded(response)
             }
 
@@ -154,10 +173,10 @@ class RemoteRepository(
     }
 
     fun getUserActivityInviteList(
-        uaId: Long,
+        request: UserActivityInviteRequest,
         callback: OnApiCallback<UserActivityInviteResponse>
     ) {
-        val call = api.getUserActivityInviteList(uaId)
+        val call = api.getUserActivityInviteList(request)
         call.enqueue(object : ApiCallback<UserActivityInviteResponse>(context) {
             override fun response(response: UserActivityInviteResponse, headers: Headers) {
                 callback.onDataLoaded(response)

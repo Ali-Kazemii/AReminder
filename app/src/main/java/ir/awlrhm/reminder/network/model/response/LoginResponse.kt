@@ -9,12 +9,21 @@ class LoginResponse: BaseResponseReminder() {
 
     inner class Result{
         @SerializedName("access_token")
-        var accessToken: String?= null
+        val accessToken: String?= null
+
+        @SerializedName("tbL_UserID")
+        val userId: Long?= null
 
         @SerializedName("refresh_token")
-        var refreshToken: String?= null
+        val refreshToken: String?= null
 
         @SerializedName("device_status")
         val deviceStatus: Int?= null
+
+        @SerializedName("app_downloadurl")
+        val downloadUrl: String?= null
+
+        @SerializedName("app_name")
+        val appName: String?= null
     }
 }

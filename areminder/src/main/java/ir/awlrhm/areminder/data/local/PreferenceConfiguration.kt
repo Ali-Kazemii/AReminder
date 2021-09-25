@@ -47,6 +47,12 @@ class PreferenceConfiguration(
             pref.edit().putInt(Const.KEY_SSID, value).apply()
         }
 
+    var userId: Long
+        get() = pref.getLong(Const.KEY_USER_ID, 0)
+        set(value) {
+            pref.edit().putLong(Const.KEY_USER_ID, value).apply()
+        }
+
     var hostName: String
         get() = pref.getString(Const.KEY_HOST_NAME, "")!!
         set(value) {
