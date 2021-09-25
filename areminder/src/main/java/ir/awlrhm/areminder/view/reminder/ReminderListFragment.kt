@@ -98,7 +98,7 @@ class ReminderListFragment(
                         PersianChronologyKhayyam.getInstance(
                             DateTimeZone.getDefault()
                         ),
-                        list,
+                        list.asReversed(),
                         object : Adapter.OnActionListener {
                             override fun onItemSelect(model: UserActivityResponse.Result) {
                                 callback.onItemSelect(model)

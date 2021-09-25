@@ -22,7 +22,7 @@
                 android:tint="@color/colorPrimaryDark"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_clock" />
+                app:srcCompat="@drawable/ic_clock_reminder" />
 
             <TextView
                 android:id="@+id/lblDate"

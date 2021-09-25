@@ -283,8 +283,8 @@ class AddReminderFragment(
                         add(
                             index,
                             ItemModel(
-                                result.customerId ?: 0,
-                                result.title ?: ""
+                                result.valueMember?.toLong() ?: 0,
+                                result.textMember ?: ""
                             )
                         )
                     }
