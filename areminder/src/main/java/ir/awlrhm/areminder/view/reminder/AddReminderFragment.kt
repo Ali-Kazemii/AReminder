@@ -110,9 +110,9 @@ class AddReminderFragment(
         btnClose.setOnClickListener { activity.onBackPressed() }
         btnDelete.setOnClickListener {
             ActionDialog.Builder()
-                .title(getString(R.string.warning))
-                .description(getString(R.string.are_you_sure_delete))
-                .positive(getString(R.string.ok)) {
+                .setTitle(getString(R.string.warning))
+                .setDescription(getString(R.string.are_you_sure_delete))
+                .setPositive(getString(R.string.ok)) {
                     showLoading(true)
                     viewModel.deleteUserActivity(
                         DeleteUserRequest().also { request->
@@ -123,7 +123,7 @@ class AddReminderFragment(
                         }
                     )
                 }
-                .negative(getString(R.string.no)) {}
+                .setNegative(getString(R.string.no)) {}
                 .build()
                 .show(activity.supportFragmentManager, ActionDialog.TAG)
         }
@@ -450,10 +450,10 @@ class AddReminderFragment(
         val activity = activity ?: return
         viewModel.error.observe(viewLifecycleOwner, {
             ActionDialog.Builder()
-                .title(getString(R.string.warning))
-                .description(it.message ?: getString(R.string.response_error))
-                .cancelable(false)
-                .negative(getString(R.string.ok)) {
+                .setTitle(getString(R.string.warning))
+                .setDescription(it.message ?: getString(R.string.response_error))
+                .setCancelable(false)
+                .setNegative(getString(R.string.ok)) {
                     activity.onBackPressed()
                 }
                 .build()

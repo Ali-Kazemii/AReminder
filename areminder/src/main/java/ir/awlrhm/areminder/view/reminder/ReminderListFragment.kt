@@ -90,7 +90,7 @@ class ReminderListFragment(
     }
 
     override fun handleObservers() {
-        viewModel.listUserActivity1.observe(viewLifecycleOwner, Observer{
+        viewModel.listUserActivity1.observe(viewLifecycleOwner, {
             it.result?.let { list ->
                 if (list.isNotEmpty()) {
                     loading.isVisible = false
@@ -127,12 +127,12 @@ class ReminderListFragment(
 
     override fun handleError() {
         val activity = activity ?: return
-        viewModel.errorEventList1.observe(this, Observer{
+        viewModel.errorEventList1.observe(this, {
             ActionDialog.Builder()
-                .title(getString(R.string.warning))
-                .description(it.message ?: getString(R.string.response_error))
-                .cancelable(false)
-                .negative(getString(R.string.ok)) {
+                .setTitle(getString(R.string.warning))
+                .setDescription(it.message ?: getString(R.string.response_error))
+                .setCancelable(false)
+                .setNegative(getString(R.string.ok)) {
                     activity.onBackPressed()
                 }
                 .build()

@@ -127,7 +127,7 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun gotoAddReminder() {
-        addFragmentInActivity(
+        replaceFragmentInActivity(
             R.id.container,
             AddReminderFragment {
                 getEvents()
@@ -137,7 +137,7 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun gotoEditReminder(model: UserActivityResponse.Result) {
-        addFragmentInActivity(
+        replaceFragmentInActivity(
             R.id.container,
             AddReminderFragment(model) {
                 getEvents()
@@ -149,10 +149,10 @@ class ReminderActivity : AppCompatActivity() {
     private fun handleError() {
         viewModel.errorEventList.observe(this, {
             ActionDialog.Builder()
-                .title(getString(R.string.warning))
-                .description(it.message ?: getString(R.string.response_error))
-                .cancelable(false)
-                .negative(getString(R.string.ok)) {
+                .setTitle(getString(R.string.warning))
+                .setDescription(it.message ?: getString(R.string.response_error))
+                .setCancelable(false)
+                .setNegative(getString(R.string.ok)) {
                     this.finish()
                 }
                 .build()
