@@ -67,10 +67,6 @@ dependencies {
     annotationProcessor "com.github.bumptech.glide:compiler:4.10.0"
     //date time
     implementation 'com.github.mohamadian:PersianJodaTime:1.2'
-    //koin
-    implementation "io.insert-koin:koin-core:3.2.0-beta-1"
-    implementation "io.insert-koin:koin-android:3.2.0-beta-1"
     //module
     implementation 'com.github.AWLRHM:Module:2.1.0'
 }
-apply plugin: 'koin'

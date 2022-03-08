@@ -1,23 +1,17 @@
 package ir.awlrhm.areminder.data.network
 
 import android.content.Context
-import android.content.Intent
-import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.api.ApiCallback
 import ir.awlrhm.areminder.data.network.api.ApiInterface
 import ir.awlrhm.areminder.data.network.model.base.BaseResponse
 import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.*
-import ir.awlrhm.areminder.utils.ErrorKey
-import ir.awlrhm.areminder.view.reminder.ReminderActivity
-import ir.awlrhm.modules.enums.MessageStatus
-import ir.awlrhm.modules.extentions.yToast
 import okhttp3.Headers
 
 internal class RemoteRepository(
     private val context: Context,
-    private val pref: PreferenceConfiguration,
-    private val api: ApiInterface
+    private val api: ApiInterface,
+    private val callback: (Int?)-> Unit
 ) {
 
     companion object{
@@ -30,23 +24,7 @@ internal class RemoteRepository(
     }
 
     private fun handleError(body: BaseResponse) {
-        when (body.statusDescription) {
-            ErrorKey.AUTHORIZATION -> context.showLogin()
-
-//            ErrorKey.DOWNLOAD_VERSION -> onDownloadVersion?.invoke()
-        }
-    }
-
-    private fun Context.showLogin() {
-        yToast(
-            ERROR_AUTHORIZATION,
-            MessageStatus.ERROR
-        )
-        pref.isLogout = true
-        val intent = Intent(this, ReminderActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
+        callback.invoke(body.statusDescription)
     }
 
     fun getReminderType(

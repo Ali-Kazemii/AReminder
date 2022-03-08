@@ -6,7 +6,6 @@ data class ReminderBindDataModel(
     val token: String,
     val hostName: String,
     val personnelId: Long,
-    val postId: Long,
     val userId: Long,
     val imei: String,
     val osVersion: String,

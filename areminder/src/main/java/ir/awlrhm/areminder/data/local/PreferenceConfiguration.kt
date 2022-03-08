@@ -6,7 +6,6 @@ import ir.awlrhm.areminder.utils.Const
 import ir.awlrhm.areminder.utils.Const.KEY_ACCESS_TOKEN
 import ir.awlrhm.areminder.utils.Const.KEY_LOG_OUT
 import ir.awlrhm.areminder.utils.Const.KEY_PERSONNEL_ID
-import ir.awlrhm.areminder.utils.Const.KEY_POST_ID
 import ir.awlrhm.areminder.utils.Const.KEY_PREFERENCE_NAME
 import ir.awlrhm.areminder.utils.Const.KEY_USER_ID
 
@@ -31,13 +30,6 @@ internal class PreferenceConfiguration(
         get() = pref.getLong(KEY_PERSONNEL_ID, 0)
         set(value) {
             pref.edit().putLong(KEY_PERSONNEL_ID, value).apply()
-        }
-
-
-    var postId: Long
-        get() = pref.getLong(KEY_POST_ID, 0)
-        set(value) {
-            pref.edit().putLong(KEY_POST_ID, value).apply()
         }
 
     var userId: Long

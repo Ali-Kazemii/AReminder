@@ -63,7 +63,6 @@ class LoginActivity: AppCompatActivity() {
                         token = token,
                         hostName = HOST_NAME,
                         personnelId = 0,
-                        postId = 0,
                         userId = viewModel.userId,
                         imei = viewModel.imei,
                         osVersion = viewModel.osVersion,

@@ -62,8 +62,4 @@ dependencies {
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:2.7.2"
     implementation "com.squareup.retrofit2:converter-gson:2.7.2"
-    //koin
-    implementation "io.insert-koin:koin-core:3.2.0-beta-1"
-    implementation "io.insert-koin:koin-android:3.2.0-beta-1"
 }
-apply plugin: 'koin'

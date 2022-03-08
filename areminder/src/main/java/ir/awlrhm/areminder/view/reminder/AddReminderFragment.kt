@@ -13,6 +13,7 @@ import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.UserActivityInviteResponse
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utils.customerJson
+import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.utils.userActivityInviteJson
 import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.modules.enums.MessageStatus
@@ -22,7 +23,6 @@ import ir.awlrhm.modules.view.ActionDialog
 import ir.awlrhm.modules.view.ChooseDialog
 import kotlinx.android.synthetic.main.contain_add_reminder.*
 import kotlinx.android.synthetic.main.fragment_add_reminder.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 internal class AddReminderFragment(
     private val callback: () -> Unit
@@ -35,7 +35,7 @@ internal class AddReminderFragment(
         this.model = model
     }
 
-    private val viewModel by viewModel<ReminderViewModel>()
+    private lateinit var viewModel: ReminderViewModel
 
     private var model: UserActivityResponse.Result? = null
     private var listReminderType: MutableList<ItemModel> = mutableListOf()
@@ -50,6 +50,12 @@ internal class AddReminderFragment(
 
 
     override fun setup() {
+        val activity = activity ?: return
+
+        viewModel = activity.initialViewModel{
+            (activity as ReminderActivity).handleError(it)
+        }
+
         txtStartDate.text = viewModel.currentDate
         txtEndDate.text = viewModel.currentDate
         txtReminderDate.text = viewModel.currentDate
@@ -294,7 +300,8 @@ internal class AddReminderFragment(
             }
         })
 
-        viewModel.responseId.observe(viewLifecycleOwner, { response ->
+        viewModel.addSuccessful.observe(viewLifecycleOwner, { response ->
+            showLoading(false)
             if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let {
                     if (it != 0L) {
@@ -304,17 +311,6 @@ internal class AddReminderFragment(
                     } else
                         activity.showError(response.message)
                 }
-            }
-        })
-
-        viewModel.addFailure.observe(viewLifecycleOwner, {
-            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                showLoading(false)
-                activity.showFlashbar(
-                    getString(R.string.error),
-                    it?.message ?: getString(R.string.failed_operation),
-                    MessageStatus.ERROR
-                )
             }
         })
 
@@ -441,15 +437,13 @@ internal class AddReminderFragment(
     override fun handleError() {
         val activity = activity ?: return
         viewModel.error.observe(viewLifecycleOwner, {
-            ActionDialog.Builder()
-                .setTitle(getString(R.string.warning))
-                .setDescription(it.message ?: getString(R.string.response_error))
-                .setCancelable(false)
-                .setNegative(getString(R.string.ok)) {
-                    activity.onBackPressed()
-                }
-                .build()
-                .show(activity.supportFragmentManager, ActionDialog.TAG)
+           activity.showError(it.message)
+        })
+        viewModel.addFailure.observe(viewLifecycleOwner, {
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                showLoading(false)
+                activity.showError(it.message)
+            }
         })
     }
 

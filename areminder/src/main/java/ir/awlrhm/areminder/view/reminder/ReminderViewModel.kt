@@ -11,11 +11,11 @@ import ir.awlrhm.modules.extentions.formatDate
 import ir.awlrhm.modules.extentions.formatTime
 import ir.awlrhm.modules.utils.calendar.PersianCalendar
 
-internal class ReminderViewModel(
-    private val remote: RemoteRepository,
-    private val pref: PreferenceConfiguration,
-    private val calendar: PersianCalendar
-) : ViewModel() {
+internal class ReminderViewModel() : ViewModel() {
+
+    private lateinit var remote: RemoteRepository
+    private lateinit var pref: PreferenceConfiguration
+    private lateinit var calendar: PersianCalendar
 
 
     val error = MutableLiveData<BaseResponse>()
@@ -30,6 +30,18 @@ internal class ReminderViewModel(
     val listCustomerResponse = MutableLiveData<CustomerListResponse>()
     val listUserActivity = MutableLiveData<UserActivityResponse>()
     val listUserActivityInvite = MutableLiveData<UserActivityInviteResponse>()
+
+
+    fun init(
+        remote: RemoteRepository,
+        pref: PreferenceConfiguration,
+        calendar: PersianCalendar
+    ){
+        this.remote = remote
+        this.pref = pref
+        this.calendar = calendar
+    }
+
 
 
     val currentDate: String
@@ -68,12 +80,6 @@ internal class ReminderViewModel(
         get() = pref.personnelId
         set(value) {
             pref.personnelId = value
-        }
-
-    var postId: Long
-        get() = pref.postId
-        set(value) {
-            pref.postId = value
         }
 
     var userId: Long

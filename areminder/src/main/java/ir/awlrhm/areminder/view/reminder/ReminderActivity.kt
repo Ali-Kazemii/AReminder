@@ -6,11 +6,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import ir.awlrhm.areminder.R
+import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.model.request.UserActivityListRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
-import ir.awlrhm.areminder.di.injectKoin
 import ir.awlrhm.areminder.utils.Const.KEY_REMINDER
 import ir.awlrhm.areminder.utils.ErrorKey
+import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.utils.userActivityListJson
 import ir.awlrhm.areminder.view.reminder.model.ReminderBindDataModel
 import ir.awlrhm.modules.enums.MessageStatus
@@ -18,11 +19,11 @@ import ir.awlrhm.modules.extentions.replaceFragmentInActivity
 import ir.awlrhm.modules.extentions.yToast
 import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.activity_reminder.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReminderActivity : AppCompatActivity() {
 
-    private val viewModel by viewModel<ReminderViewModel>()
+    private lateinit var viewModel: ReminderViewModel
+
     private var pageNumber = 1
 
     companion object {
@@ -32,8 +33,10 @@ class ReminderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectKoin()
         setContentView(R.layout.activity_reminder)
+
+        initialParams()
+        viewModel = initialViewModel { handleError(it) }
 
         if (viewModel.isLogout) {
             viewModel.isLogout = false
@@ -43,8 +46,7 @@ class ReminderActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK, intent)
             this@ReminderActivity.finish()
 
-        }else {
-            initialParams()
+        } else {
             handleObservers()
             handleError()
             getEvents()
@@ -54,23 +56,23 @@ class ReminderActivity : AppCompatActivity() {
     private fun initialParams() {
         val model = intent.getSerializableExtra(KEY_REMINDER) as ReminderBindDataModel
 
-        viewModel.hostName = model.hostName
+        val pref = PreferenceConfiguration(this)
 
-        viewModel.token = model.token
+        pref.hostName = model.hostName
 
-        viewModel.personnelId = model.personnelId
+        pref.accessToken = model.token
 
-        viewModel.postId = model.postId
+        pref.personnelId = model.personnelId
 
-        viewModel.userId = model.userId
+        pref.userId = model.userId
 
-        viewModel.imei = model.imei
+        pref.imei = model.imei
 
-        viewModel.appVersion = model.appVersion
+        pref.appVersion = model.appVersion
 
-        viewModel.deviceModel = model.deviceModel
+        pref.deviceModel = model.deviceModel
 
-        viewModel.osVersion = model.osVersion
+        pref.osVersion = model.osVersion
     }
 
     private fun getEvents() {
@@ -97,7 +99,7 @@ class ReminderActivity : AppCompatActivity() {
                 if (loading.isVisible)
                     loading.isVisible = false
                 gotoReminderFragment(list)
-            }?: kotlin.run {
+            } ?: kotlin.run {
                 this.finish()
             }
         })
@@ -175,9 +177,10 @@ class ReminderActivity : AppCompatActivity() {
                 .show(supportFragmentManager, ActionDialog.TAG)
         })
     }
-    fun handleError(error: Int?){
+
+    fun handleError(error: Int?) {
         error?.let {
-            when(it){
+            when (it) {
                 ErrorKey.AUTHORIZATION -> {
                     yToast(
                         getString(R.string.error_finish_time),

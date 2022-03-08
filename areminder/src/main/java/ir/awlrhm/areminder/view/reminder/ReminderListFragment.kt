@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.request.UserActivityListRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
+import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.utils.userActivityListJson
 import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.modules.enums.MessageStatus
@@ -17,16 +18,19 @@ import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.fragment_list_reminder.*
 import org.joda.time.DateTimeZone
 import org.joda.time.chrono.PersianChronologyKhayyam
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 internal class ReminderListFragment(
     private val callback: OnActionListener
 ) : BaseFragment() {
 
-    private val viewModel by viewModel<ReminderViewModel>()
+    private lateinit var viewModel: ReminderViewModel
 
     override fun setup() {
         val activity = activity ?: return
+
+        viewModel = activity.initialViewModel{
+            (activity as ReminderActivity).handleError(it)
+        }
 
         rclReminder.layoutManager =
             LinearLayoutManager(activity)
@@ -127,10 +131,8 @@ internal class ReminderListFragment(
             ActionDialog.Builder()
                 .setTitle(getString(R.string.warning))
                 .setDescription(it.message ?: getString(R.string.response_error))
-                .setCancelable(false)
-                .setNegative(getString(R.string.ok)) {
-                    activity.onBackPressed()
-                }
+                .setCancelable(true)
+                .setNegative(getString(R.string.ok)) {}
                 .build()
                 .show(activity.supportFragmentManager, ActionDialog.TAG)
         })
