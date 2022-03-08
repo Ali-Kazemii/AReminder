@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ir.awlrhm.areminder">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
         <activity android:name=".view.reminder.ReminderActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>

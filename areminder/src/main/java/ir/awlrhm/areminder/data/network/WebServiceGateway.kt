@@ -2,6 +2,7 @@ package ir.awlrhm.areminder.data.network
 
 import ir.awlrhm.areminder.BuildConfig
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
+import ir.awlrhm.areminder.utils.SSID
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -10,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class WebServiceGateway(
+internal class WebServiceGateway(
     private val pref: PreferenceConfiguration
 ) {
     val retrofit: Retrofit
@@ -36,7 +37,7 @@ class WebServiceGateway(
                         .addHeader("OS_VERSION", pref.osVersion)
                         .addHeader("DEVICE_MODEL", pref.deviceModel)
                         .addHeader("APP_VERSION_CODE", pref.appVersion)
-                        .addHeader("SSID", "${pref.ssId}")
+                        .addHeader("SSID", "$SSID")
                         .addHeader("OS_TYPE", "android")
                         .addHeader("MAC_ADDRESS", "0")
                         .addHeader("IP_ADDRESS", "0")

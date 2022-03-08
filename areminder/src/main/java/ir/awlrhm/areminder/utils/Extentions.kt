@@ -1,13 +1,5 @@
 package ir.awlrhm.areminder.utils
 
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
-import ir.awlrhm.areminder.data.local.PreferenceConfiguration
-import ir.awlrhm.areminder.data.network.RemoteRepository
-import ir.awlrhm.areminder.data.network.api.ApiClient
-import ir.awlrhm.areminder.view.reminder.ReminderViewModel
-import ir.awlrhm.modules.utils.calendar.PersianCalendar
-
 fun getDayName(day: Int): String {
     return when (day) {
         1 -> "شنبه"
@@ -38,26 +30,4 @@ fun getMonthName(mothOfYear: Int): String {
         12 -> "اسفند"
         else -> ""
     }
-}
-
-
-fun FragmentActivity.initialViewModel(
-    callback: (Int?) -> Unit
-): ReminderViewModel {
-    val pref = PreferenceConfiguration(this)
-    val viewModel = ViewModelProvider(this).get(ReminderViewModel::class.java)
-    viewModel.init(
-        RemoteRepository(
-            this,
-            ApiClient(
-                pref
-            ).getInterface()
-        )
-        {
-            callback.invoke(it)
-        },
-        pref,
-        PersianCalendar()
-    )
-    return viewModel
 }

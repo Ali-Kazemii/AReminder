@@ -14,24 +14,24 @@ import com.bumptech.glide.request.RequestOptions
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utils.getMonthName
-import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
 import ir.awlrhm.areminder.view.acalenar.enums.PersianCustomMarks
 import ir.awlrhm.areminder.view.acalenar.enums.PersianViewPagerType
-import ir.awlrhm.areminder.view.base.BaseFragmentReminder
+import ir.awlrhm.areminder.view.base.BaseFragment
 import kotlinx.android.synthetic.main.contain_reminder.*
 import kotlinx.android.synthetic.main.fragment_reminder.*
 import org.joda.time.Chronology
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.chrono.PersianChronologyKhayyam
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ReminderFragment(
+internal class ReminderFragment(
     private val listEvents: MutableList<UserActivityResponse.Result>,
     private val listener: OnActionListener
-) : BaseFragmentReminder(), PersianHorizontalCalendar.OnActionListener {
+) : BaseFragment(), PersianHorizontalCalendar.OnActionListener {
 
-    private lateinit var viewModel: ReminderViewModel
+    private val viewModel by viewModel<ReminderViewModel>()
     private var adapter: Adapter? = null
 
     private val chronology: Chronology =
@@ -57,9 +57,6 @@ class ReminderFragment(
     override fun setup() {
         val activity = activity ?: return
 
-        viewModel = activity.initialViewModel{
-            (activity as ReminderActivity).handleError(it)
-        }
         Glide.with(this)
             .load(monthResource[getMonthIndex(now)])
             .apply(RequestOptions())

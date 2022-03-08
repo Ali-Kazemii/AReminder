@@ -4,17 +4,17 @@ import android.app.Dialog
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ir.awlrhm.areminder.R
-import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.modules.extentions.configBottomSheet
 import ir.awlrhm.modules.extentions.formatDate
 import ir.awlrhm.modules.extentions.showDateDialog
 import kotlinx.android.synthetic.main.bottom_sheet_reminder.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FilterReminderBottomSheet(
+internal class FilterReminderBottomSheet(
     private val callback: (String, String) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var viewModel: ReminderViewModel
+    private val viewModel by viewModel<ReminderViewModel>()
 
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
@@ -24,9 +24,6 @@ class FilterReminderBottomSheet(
         dialog.setContentView(view)
 
         activity.configBottomSheet(view, 1f)
-        viewModel = activity.initialViewModel{
-            (activity as ReminderActivity).handleError(it)
-        }
         setup(dialog)
     }
 

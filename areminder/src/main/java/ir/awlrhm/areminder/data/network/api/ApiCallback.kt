@@ -4,13 +4,13 @@ import android.content.Context
 import com.google.gson.GsonBuilder
 import ir.awlrhm.areminder.BuildConfig
 import ir.awlrhm.areminder.R
-import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
+import ir.awlrhm.areminder.data.network.model.base.BaseResponse
 import okhttp3.Headers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-abstract class ApiCallback<T : BaseResponseReminder>(
+internal abstract class ApiCallback<T : BaseResponse>(
     private val context: Context
 ) : Callback<T> {
 
@@ -29,14 +29,14 @@ abstract class ApiCallback<T : BaseResponseReminder>(
                 else -> failure(body)
             }
         } ?: kotlin.run {
-            failure(BaseResponseReminder().apply {
+            failure(BaseResponse().apply {
                 if (!response.isSuccessful) {
                     if (errorMap.containsKey(response.code())) {
                         try {
                             val gson = GsonBuilder().create()
                             val mError = gson.fromJson(
                                 response.errorBody()?.string(),
-                                BaseResponseReminder::class.java
+                                BaseResponse::class.java
                             )
                             message = mError?.message ?: errorMap[response.code()]
                             status = mError?.status
@@ -55,7 +55,7 @@ abstract class ApiCallback<T : BaseResponseReminder>(
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) {
-        failure(BaseResponseReminder().apply {
+        failure(BaseResponse().apply {
             message =
                 t.message?.let {
                     if (BuildConfig.DEBUG)
@@ -69,5 +69,5 @@ abstract class ApiCallback<T : BaseResponseReminder>(
 
     abstract fun response(response: T, headers: Headers)
 
-    abstract fun failure(response: BaseResponseReminder? = null)
+    abstract fun failure(response: BaseResponse? = null)
 }

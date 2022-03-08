@@ -1,9 +1,9 @@
 package ir.awlrhm.areminder.data.network.model.response
 
 import com.google.gson.annotations.SerializedName
-import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
+import ir.awlrhm.areminder.data.network.model.base.BaseResponse
 
-class UserActivityResponse: BaseResponseReminder() {
+internal class UserActivityResponse: BaseResponse() {
     @SerializedName("result")
     val result: MutableList<Result>?= null
 

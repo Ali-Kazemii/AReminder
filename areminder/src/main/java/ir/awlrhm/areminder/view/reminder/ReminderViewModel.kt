@@ -4,43 +4,33 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.RemoteRepository
-import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
+import ir.awlrhm.areminder.data.network.model.base.BaseResponse
 import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.*
 import ir.awlrhm.modules.extentions.formatDate
 import ir.awlrhm.modules.extentions.formatTime
 import ir.awlrhm.modules.utils.calendar.PersianCalendar
 
-class ReminderViewModel : ViewModel() {
+internal class ReminderViewModel(
+    private val remote: RemoteRepository,
+    private val pref: PreferenceConfiguration,
+    private val calendar: PersianCalendar
+) : ViewModel() {
 
-    private lateinit var remote: RemoteRepository
-    private lateinit var pref: PreferenceConfiguration
-    private lateinit var calendar: PersianCalendar
 
-    val error = MutableLiveData<BaseResponseReminder>()
-    val response = MutableLiveData<BaseResponseReminder>()
-    val responseBoolean = MutableLiveData<ResponseBoolean>()
-
-    val errorEventList = MutableLiveData<BaseResponseReminder>()
-    val errorEventList1 = MutableLiveData<BaseResponseReminder>()
+    val error = MutableLiveData<BaseResponse>()
+    val errorEventList = MutableLiveData<BaseResponse>()
+    val response = MutableLiveData<BaseResponse>()
     val responseId = MutableLiveData<ResponseId>()
-    val addFailure = MutableLiveData<BaseResponseReminder?>()
+
+    val addSuccessful = MutableLiveData<ResponseId>()
+    val addFailure = MutableLiveData<BaseResponse>()
     val listReminderType = MutableLiveData<ReminderTypeResponse>()
-    val listMeetingLocation = MutableLiveData<MeetingLocationResponse>()
-    val listCustomer = MutableLiveData<CustomerListResponse>()
+    val listMeetingLocationResponse = MutableLiveData<MeetingLocationResponse>()
+    val listCustomerResponse = MutableLiveData<CustomerListResponse>()
     val listUserActivity = MutableLiveData<UserActivityResponse>()
-    val listUserActivity1 = MutableLiveData<UserActivityResponse>()
     val listUserActivityInvite = MutableLiveData<UserActivityInviteResponse>()
 
-    fun init(
-         remote: RemoteRepository,
-         pref: PreferenceConfiguration,
-         calendar: PersianCalendar
-    ){
-        this.remote = remote
-        this.pref = pref
-        this.calendar = calendar
-    }
 
     val currentDate: String
         get() = formatDate(calendar.persianShortDate)
@@ -66,10 +56,24 @@ class ReminderViewModel : ViewModel() {
             pref.accessToken = value
         }
 
-    var ssId: Int
-        get() = pref.ssId
+
+    var isLogout: Boolean
+        get() = pref.isLogout
         set(value) {
-            pref.ssId = value
+            pref.isLogout = value
+        }
+
+
+    var personnelId: Long
+        get() = pref.personnelId
+        set(value) {
+            pref.personnelId = value
+        }
+
+    var postId: Long
+        get() = pref.postId
+        set(value) {
+            pref.postId = value
         }
 
     var userId: Long
@@ -103,7 +107,7 @@ class ReminderViewModel : ViewModel() {
         }
 
     fun getReminderType(
-        request: ActivityTypeListRequest
+        request: ReminderTypeRequest
     ) {
         remote.getReminderType(
             request,
@@ -112,7 +116,7 @@ class ReminderViewModel : ViewModel() {
                     listReminderType.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
+                override fun onError(response: BaseResponse?) {
                     response?.let { error.postValue(it) }
                 }
             }
@@ -126,15 +130,16 @@ class ReminderViewModel : ViewModel() {
             request,
             object : RemoteRepository.OnApiCallback<MeetingLocationResponse> {
                 override fun onDataLoaded(data: MeetingLocationResponse) {
-                    listMeetingLocation.postValue(data)
+                    listMeetingLocationResponse.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
+                override fun onError(response: BaseResponse?) {
                     response?.let { error.postValue(it) }
                 }
             }
         )
     }
+
 
     fun getCustomerList(
         request: CustomerListRequest
@@ -143,10 +148,10 @@ class ReminderViewModel : ViewModel() {
             request,
             object : RemoteRepository.OnApiCallback<CustomerListResponse> {
                 override fun onDataLoaded(data: CustomerListResponse) {
-                    listCustomer.postValue(data)
+                    listCustomerResponse.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
+                override fun onError(response: BaseResponse?) {
                     response?.let { error.postValue(it) }
                 }
             }
@@ -154,70 +159,54 @@ class ReminderViewModel : ViewModel() {
     }
 
     fun getUserActivityList(
-        request: UserActivityRequest
+        request: UserActivityListRequest
     ) {
         remote.getUserActivityList(
-           request,
+            request,
             object : RemoteRepository.OnApiCallback<UserActivityResponse> {
                 override fun onDataLoaded(data: UserActivityResponse) {
                     listUserActivity.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
+                override fun onError(response: BaseResponse?) {
                     response?.let { errorEventList.postValue(it) }
                 }
             }
         )
     }
 
-    fun getUserActivityList1(
-       request: UserActivityRequest
-    ) {
-        remote.getUserActivityList(
-            request,
-            object : RemoteRepository.OnApiCallback<UserActivityResponse> {
-                override fun onDataLoaded(data: UserActivityResponse) {
-                    listUserActivity1.postValue(data)
-                }
-
-                override fun onError(response: BaseResponseReminder?) {
-                    response?.let { errorEventList1.postValue(it) }
-                }
-            }
-        )
-    }
-
-    fun insertUserActivityWithUtt(
+    fun insertUserActivity(
         request: PostUserActivityRequest
     ) {
-        remote.postUserActivityWithUtt(
+        remote.insertUserActivity(
             request,
             object : RemoteRepository.OnApiCallback<ResponseId> {
                 override fun onDataLoaded(data: ResponseId) {
-                    responseId.postValue(data)
+                    addSuccessful.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
-                    addFailure.postValue(response)
+                override fun onError(response: BaseResponse?) {
+                    response?.let { addFailure.postValue(it) }
                 }
             })
     }
 
-    fun updateUserActivityWithUtt(
+    fun updateUserActivity(
         request: PostUserActivityRequest
     ) {
-        remote.updateUserActivityWithUtt(
+        remote.updateUserActivity(
             request,
             object : RemoteRepository.OnApiCallback<ResponseId> {
                 override fun onDataLoaded(data: ResponseId) {
-                    responseId.postValue(data)
+                    addSuccessful.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
-                    addFailure.postValue(response)
+                override fun onError(response: BaseResponse?) {
+                    response?.let { addFailure.postValue(it) }
                 }
             })
     }
+
 
     fun deleteUserActivity(
         request: DeleteUserRequest
@@ -229,11 +218,12 @@ class ReminderViewModel : ViewModel() {
                     responseId.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
+                override fun onError(response: BaseResponse?) {
                     response?.let { addFailure.postValue(it) }
                 }
             })
     }
+
 
     fun getUserActivityInviteList(
         request: UserActivityInviteRequest
@@ -245,7 +235,7 @@ class ReminderViewModel : ViewModel() {
                     listUserActivityInvite.postValue(data)
                 }
 
-                override fun onError(response: BaseResponseReminder?) {
+                override fun onError(response: BaseResponse?) {
                     response?.let { addFailure.postValue(it) }
                 }
             })

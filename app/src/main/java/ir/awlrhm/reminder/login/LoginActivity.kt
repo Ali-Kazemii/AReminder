@@ -3,8 +3,9 @@ package ir.awlrhm.reminder.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ir.awlrhm.areminder.utils.Const
+import ir.awlrhm.areminder.utils.HOST_NAME
 import ir.awlrhm.areminder.view.reminder.ReminderActivity
+import ir.awlrhm.areminder.view.reminder.model.ReminderBindDataModel
 import ir.awlrhm.modules.device.getDeviceIMEI
 import ir.awlrhm.modules.device.getDeviceName
 import ir.awlrhm.modules.device.getOSVersion
@@ -16,6 +17,7 @@ import ir.awlrhm.modules.utils.OnPermissionListener
 import ir.awlrhm.reminder.BuildConfig
 import ir.awlrhm.reminder.R
 import ir.awlrhm.reminder.initialLoginViewModel
+import ir.awlrhm.reminder.login.Keys.KEY_REMINDER
 import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginActivity: AppCompatActivity() {
@@ -57,16 +59,30 @@ class LoginActivity: AppCompatActivity() {
             R.id.container,
             LoginFragment(object: LoginFragment.OnActionListener{
                 override fun onToken(token: String) {
+                    val model = ReminderBindDataModel(
+                        token = token,
+                        hostName = HOST_NAME,
+                        personnelId = 0,
+                        postId = 0,
+                        userId = viewModel.userId,
+                        imei = viewModel.imei,
+                        osVersion = viewModel.osVersion,
+                        deviceModel = viewModel.deviceModel,
+                        appVersion = viewModel.appVersion
+                    )
+
                     val intent = Intent(this@LoginActivity, ReminderActivity::class.java)
                     val bundle = Bundle()
-                    bundle.putString(Const.KEY_HOST_NAME, Keys.HOST_NAME)
+                    bundle.putSerializable(KEY_REMINDER, model)
+
+                 /*   bundle.putString(Const.KEY_HOST_NAME, Keys.HOST_NAME)
                     bundle.putString(Const.KEY_ACCESS_TOKEN, token)
                     bundle.putInt(Const.KEY_SSID, viewModel.ssId)
                     bundle.putString(Const.KEY_IMEI, viewModel.imei)
                     bundle.putString(Const.KEY_DEVICE_MODEL, viewModel.deviceModel)
                     bundle.putString(Const.KEY_OS_VERSION, viewModel.osVersion)
                     bundle.putString(Const.KEY_APP_VERSION, viewModel.appVersion)
-                    bundle.putLong(Const.KEY_USER_ID, viewModel.userId)
+                    bundle.putLong(Const.KEY_USER_ID, viewModel.userId)*/
                     intent.putExtras(bundle)
                     startActivity(intent)
                 }

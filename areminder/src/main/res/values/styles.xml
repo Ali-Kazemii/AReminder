@@ -3,8 +3,9 @@
     <style name="TextCaptionStyle" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/textAppearanceCaption</item>
+        <item name="android:textSize">@dimen/textAppearanceCaption12</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/iran_sans_mobile</item>
     </style>
+
 </resources>

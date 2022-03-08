@@ -1,14 +1,19 @@
 package ir.awlrhm.reminder.login
 
 object Keys {
-    const val HOST_NAME = "http://185.79.156.176:8014/api/" //Alborz
-//    const val HOST_NAME = "http://185.79.156.176:8013/api/" //semnan-server
+    const val KEY_PREFERENCE_NAME = "reminder"
 
-    const val SSID_EMPLOYEE = 982 // managers
-    const val SSID_SUPERVISORS = 986 // managers
-    const val SSID_MANAGERS = 981 // managers
-    const val SSID_CONTRACTORS = 983 // managers
-    const val SSID_WAREHOUSE = 989 // managers
-    const val SSID_ASSET_MANAGEMENT = 917 // managers
-    const val SSID_VALUE_ENGINEERING = 906 // managers
+    const val KEY_REMINDER = "reminder"
+
+
+    const val KEY_HOST_NAME = "host_name"
+    const val KEY_ACCESS_TOKEN= "access_token"
+    const val KEY_POST_ID= "postId"
+    const val KEY_USER_ID= "user_id"
+    const val KEY_PERSONNEL_ID= "personnelId"
+
+    const val KEY_IMEI = "imei"
+    const val KEY_OS_VERSION = "os_version"
+    const val KEY_DEVICE_MODEL = "device_model"
+    const val KEY_APP_VERSION = "app_version"
 }

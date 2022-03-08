@@ -13,9 +13,8 @@ import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.UserActivityInviteResponse
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utils.customerJson
-import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.utils.userActivityInviteJson
-import ir.awlrhm.areminder.view.base.BaseFragmentReminder
+import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.*
 import ir.awlrhm.modules.models.ItemModel
@@ -23,10 +22,11 @@ import ir.awlrhm.modules.view.ActionDialog
 import ir.awlrhm.modules.view.ChooseDialog
 import kotlinx.android.synthetic.main.contain_add_reminder.*
 import kotlinx.android.synthetic.main.fragment_add_reminder.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AddReminderFragment(
+internal class AddReminderFragment(
     private val callback: () -> Unit
-) : BaseFragmentReminder() {
+) : BaseFragment() {
 
     constructor(
         model: UserActivityResponse.Result? = null,
@@ -35,7 +35,7 @@ class AddReminderFragment(
         this.model = model
     }
 
-    private lateinit var viewModel: ReminderViewModel
+    private val viewModel by viewModel<ReminderViewModel>()
 
     private var model: UserActivityResponse.Result? = null
     private var listReminderType: MutableList<ItemModel> = mutableListOf()
@@ -50,12 +50,6 @@ class AddReminderFragment(
 
 
     override fun setup() {
-        val activity = activity ?: return
-
-        viewModel = activity.initialViewModel {
-            (activity as ReminderActivity).handleError(it)
-        }
-
         txtStartDate.text = viewModel.currentDate
         txtEndDate.text = viewModel.currentDate
         txtReminderDate.text = viewModel.currentDate
@@ -117,7 +111,6 @@ class AddReminderFragment(
                     viewModel.deleteUserActivity(
                         DeleteUserRequest().also { request->
                             request.uaId = model?.uaId
-                            request.ssId = viewModel.ssId
                             request.financialYearId = viewModel.financialYear
                             request.userId = viewModel.userId
                         }
@@ -131,9 +124,9 @@ class AddReminderFragment(
             if (isValid) {
                 showLoading(true)
                 if (isOnEditMode)
-                    viewModel.updateUserActivityWithUtt(request)
+                    viewModel.updateUserActivity(request)
                 else
-                    viewModel.insertUserActivityWithUtt(request)
+                    viewModel.insertUserActivity(request)
 
             } else {
                 showLoading(false)
@@ -216,7 +209,6 @@ class AddReminderFragment(
                 request.alarmTime = txtReminderTime.text.toString()
                 request.financialYearId = viewModel.financialYear
                 request.userId = viewModel.userId
-                request.ssId = viewModel.ssId
                 request.registerDate = viewModel.currentDate
                 request.utt = convertUTTModelToJson(uttList)
             }
@@ -259,7 +251,7 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listMeetingLocation.observe(viewLifecycleOwner, { response ->
+        viewModel.listMeetingLocationResponse.observe(viewLifecycleOwner, { response ->
             if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 showLoading(false)
                 listMeetingLocation = mutableListOf<ItemModel>().apply {
@@ -276,7 +268,7 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.listCustomer.observe(viewLifecycleOwner, { response ->
+        viewModel.listCustomerResponse.observe(viewLifecycleOwner, { response ->
             if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 listCustomer = mutableListOf<ItemModel>().apply {
                     response.result?.forEachIndexed { index, result ->
@@ -326,16 +318,16 @@ class AddReminderFragment(
             }
         })
 
-        viewModel.responseBoolean.observe(viewLifecycleOwner, { response ->
+        viewModel.responseId.observe(viewLifecycleOwner, { response ->
             if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                 response.result?.let {
-                    if (it) {
-                        activity.yToast(
-                            getString(R.string.success_operation),
-                            MessageStatus.SUCCESS
-                        )
+                    if (it != 0L) {
+                        activity.successOperation(response.message)
                         callback.invoke()
-                    }
+                    }else
+                        activity.failureOperation(response.message)
+                }?: kotlin.run {
+                    activity.failureOperation(response.message)
                 }
             }
         })
@@ -420,7 +412,7 @@ class AddReminderFragment(
             showReminderTypeList()
         else
             viewModel.getReminderType(
-                ActivityTypeListRequest().also { request ->
+                ReminderTypeRequest().also { request ->
                     request.userId = viewModel.userId
                     request.typeOperation = 16
                 }

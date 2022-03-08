@@ -5,33 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import ir.awlrhm.areminder.R
-import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
+import ir.awlrhm.areminder.data.network.model.request.UserActivityListRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
-import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.utils.userActivityListJson
-import ir.awlrhm.areminder.view.base.BaseFragmentReminder
+import ir.awlrhm.areminder.view.base.BaseFragment
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.yToast
 import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.fragment_list_reminder.*
 import org.joda.time.DateTimeZone
 import org.joda.time.chrono.PersianChronologyKhayyam
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ReminderListFragment(
+internal class ReminderListFragment(
     private val callback: OnActionListener
-) : BaseFragmentReminder() {
+) : BaseFragment() {
 
-    private lateinit var viewModel: ReminderViewModel
+    private val viewModel by viewModel<ReminderViewModel>()
 
     override fun setup() {
         val activity = activity ?: return
 
-        viewModel = activity.initialViewModel{
-            (activity as ReminderActivity).handleError(it)
-        }
         rclReminder.layoutManager =
             LinearLayoutManager(activity)
     }
@@ -48,8 +44,8 @@ class ReminderListFragment(
         super.onResume()
         if (!loading.isVisible)
             loading.isVisible = true
-        viewModel.getUserActivityList1(
-            UserActivityRequest().also { request ->
+        viewModel.getUserActivityList(
+            UserActivityListRequest().also { request ->
                 request.userId = viewModel.userId
                 request.financialYearId = viewModel.financialYear
                 request.typeOperation = 101
@@ -73,8 +69,8 @@ class ReminderListFragment(
         btnFilter.setOnClickListener {
             FilterReminderBottomSheet { start, end ->
                 loading.isVisible = true
-                viewModel.getUserActivityList1(
-                    UserActivityRequest().also { request ->
+                viewModel.getUserActivityList(
+                    UserActivityListRequest().also { request ->
                         request.userId = viewModel.userId
                         request.financialYearId = viewModel.financialYear
                         request.typeOperation = 101
@@ -90,7 +86,7 @@ class ReminderListFragment(
     }
 
     override fun handleObservers() {
-        viewModel.listUserActivity1.observe(viewLifecycleOwner, {
+        viewModel.listUserActivity.observe(viewLifecycleOwner, {
             it.result?.let { list ->
                 if (list.isNotEmpty()) {
                     loading.isVisible = false
@@ -127,7 +123,7 @@ class ReminderListFragment(
 
     override fun handleError() {
         val activity = activity ?: return
-        viewModel.errorEventList1.observe(this, {
+        viewModel.errorEventList.observe(this, {
             ActionDialog.Builder()
                 .setTitle(getString(R.string.warning))
                 .setDescription(it.message ?: getString(R.string.response_error))

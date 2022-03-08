@@ -1,30 +1,56 @@
 package ir.awlrhm.areminder.data.network
 
 import android.content.Context
+import android.content.Intent
+import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.api.ApiCallback
 import ir.awlrhm.areminder.data.network.api.ApiInterface
-import ir.awlrhm.areminder.data.network.model.base.BaseResponseReminder
+import ir.awlrhm.areminder.data.network.model.base.BaseResponse
 import ir.awlrhm.areminder.data.network.model.request.*
 import ir.awlrhm.areminder.data.network.model.response.*
+import ir.awlrhm.areminder.utils.ErrorKey
+import ir.awlrhm.areminder.view.reminder.ReminderActivity
+import ir.awlrhm.modules.enums.MessageStatus
+import ir.awlrhm.modules.extentions.yToast
 import okhttp3.Headers
 
-class RemoteRepository(
+internal class RemoteRepository(
     private val context: Context,
-    private val api: ApiInterface,
-    private val callback: (Int?)-> Unit
+    private val pref: PreferenceConfiguration,
+    private val api: ApiInterface
 ) {
+
+    companion object{
+        const val ERROR_AUTHORIZATION = "زمان استفاده از برنامه به پایان رسیده... مجددا لاگین کنید"
+    }
 
     interface OnApiCallback<Model> {
         fun onDataLoaded(data: Model)
-        fun onError(response: BaseResponseReminder?)
+        fun onError(response: BaseResponse?)
     }
 
-    private fun handleError(body: BaseResponseReminder) {
-            callback.invoke(body.statusDescription)
+    private fun handleError(body: BaseResponse) {
+        when (body.statusDescription) {
+            ErrorKey.AUTHORIZATION -> context.showLogin()
+
+//            ErrorKey.DOWNLOAD_VERSION -> onDownloadVersion?.invoke()
+        }
+    }
+
+    private fun Context.showLogin() {
+        yToast(
+            ERROR_AUTHORIZATION,
+            MessageStatus.ERROR
+        )
+        pref.isLogout = true
+        val intent = Intent(this, ReminderActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
     fun getReminderType(
-        request: ActivityTypeListRequest,
+        request: ReminderTypeRequest,
         callback: OnApiCallback<ReminderTypeResponse>
     ) {
         val call = api.getReminderType(request)
@@ -33,7 +59,7 @@ class RemoteRepository(
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)
@@ -54,7 +80,7 @@ class RemoteRepository(
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)
@@ -75,7 +101,7 @@ class RemoteRepository(
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)
@@ -87,7 +113,7 @@ class RemoteRepository(
     }
 
     fun getUserActivityList(
-        request: UserActivityRequest,
+        request: UserActivityListRequest,
         callback: OnApiCallback<UserActivityResponse>
     ) {
         val call = api.getUserActivityList(
@@ -98,7 +124,7 @@ class RemoteRepository(
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)
@@ -109,17 +135,17 @@ class RemoteRepository(
         })
     }
 
-    fun postUserActivityWithUtt(
+    fun insertUserActivity(
         request: PostUserActivityRequest,
         callback: OnApiCallback<ResponseId>
     ) {
-        val call = api.postUserActivityWithUtt(request)
+        val call = api.insertUserActivity(request)
         call.enqueue(object : ApiCallback<ResponseId>(context) {
             override fun response(response: ResponseId, headers: Headers) {
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)
@@ -130,17 +156,17 @@ class RemoteRepository(
         })
     }
 
-    fun updateUserActivityWithUtt(
+    fun updateUserActivity(
         request: PostUserActivityRequest,
         callback: OnApiCallback<ResponseId>
     ) {
-        val call = api.updateUserActivityWithUtt(request)
+        val call = api.updateUserActivity(request)
         call.enqueue(object : ApiCallback<ResponseId>(context) {
             override fun response(response: ResponseId, headers: Headers) {
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)
@@ -161,7 +187,7 @@ class RemoteRepository(
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)
@@ -182,7 +208,7 @@ class RemoteRepository(
                 callback.onDataLoaded(response)
             }
 
-            override fun failure(response: BaseResponseReminder?) {
+            override fun failure(response: BaseResponse?) {
                 response?.let {
                     handleError(it)
                     callback.onError(response)

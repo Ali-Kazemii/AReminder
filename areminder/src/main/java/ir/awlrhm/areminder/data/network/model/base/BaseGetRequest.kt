@@ -1,25 +1,17 @@
 package ir.awlrhm.areminder.data.network.model.base
 
 import com.google.gson.annotations.SerializedName
+import ir.awlrhm.areminder.utils.PAGE_SIZE
 
-open class BaseGetRequestReminder: BaseRequestReminder() {
+internal open class BaseGetRequest: BaseRequest() {
     @SerializedName("jsonParameters")
     var jsonParameters: String?= null
 
     @SerializedName("pageNumber")
-    var pageNumber: Int?= 1
+    var pageNumber: Int?= null
 
     @SerializedName("pageSize")
-    var pageSize : Int= 1000
-
-    @SerializedName("niK_SsID")
-    var ssId: Int?= null
-
-    @SerializedName("acC_FinancialYearID")
-    var financialYearId: Int?= null
-
-    @SerializedName("tbL_UserID")
-    var userId: Long?= null
+    var pageSize : Int= PAGE_SIZE
 
     @SerializedName("typeOperation")
     var typeOperation: Int = 0

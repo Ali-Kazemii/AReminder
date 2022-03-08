@@ -1,75 +1,91 @@
 package ir.awlrhm.areminder.view.reminder
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import ir.awlrhm.areminder.R
-import ir.awlrhm.areminder.data.local.PreferenceConfiguration
-import ir.awlrhm.areminder.data.network.model.request.UserActivityRequest
+import ir.awlrhm.areminder.data.network.model.request.UserActivityListRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
-import ir.awlrhm.areminder.utils.Const.KEY_ACCESS_TOKEN
-import ir.awlrhm.areminder.utils.Const.KEY_APP_VERSION
-import ir.awlrhm.areminder.utils.Const.KEY_DEVICE_MODEL
-import ir.awlrhm.areminder.utils.Const.KEY_HOST_NAME
-import ir.awlrhm.areminder.utils.Const.KEY_IMEI
-import ir.awlrhm.areminder.utils.Const.KEY_OS_VERSION
-import ir.awlrhm.areminder.utils.Const.KEY_SSID
-import ir.awlrhm.areminder.utils.Const.KEY_USER_ID
+import ir.awlrhm.areminder.di.injectKoin
+import ir.awlrhm.areminder.utils.Const.KEY_REMINDER
 import ir.awlrhm.areminder.utils.ErrorKey
-import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.utils.userActivityListJson
+import ir.awlrhm.areminder.view.reminder.model.ReminderBindDataModel
 import ir.awlrhm.modules.enums.MessageStatus
-import ir.awlrhm.modules.extentions.addFragmentInActivity
 import ir.awlrhm.modules.extentions.replaceFragmentInActivity
 import ir.awlrhm.modules.extentions.yToast
 import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.activity_reminder.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReminderActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: ReminderViewModel
+    private val viewModel by viewModel<ReminderViewModel>()
+    private var pageNumber = 1
+
+    companion object {
+        const val KEY_RESULT = "result"
+        const val LOG_OUT = 1234321
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injectKoin()
         setContentView(R.layout.activity_reminder)
 
-        initialParams()
-        viewModel = initialViewModel{handleError(it)}
-        handleObservers()
-        handleError()
-        getEvents()
+        if (viewModel.isLogout) {
+            viewModel.isLogout = false
+
+            val intent = Intent()
+            intent.putExtra(KEY_RESULT, LOG_OUT)
+            setResult(Activity.RESULT_OK, intent)
+            this@ReminderActivity.finish()
+
+        }else {
+            initialParams()
+            handleObservers()
+            handleError()
+            getEvents()
+        }
     }
 
     private fun initialParams() {
-        val host = intent.extras?.getString(KEY_HOST_NAME)
-        val pref = PreferenceConfiguration(this)
-        host?.let {
-            pref.hostName = it
-            pref.accessToken = intent.extras?.getString(KEY_ACCESS_TOKEN) ?: ""
-            pref.ssId = intent.extras?.getInt(KEY_SSID) ?: 0
-            pref.imei = intent.extras?.getString(KEY_IMEI) ?: ""
-            pref.appVersion = intent.extras?.getString(KEY_APP_VERSION) ?: ""
-            pref.deviceModel = intent.extras?.getString(KEY_DEVICE_MODEL) ?: ""
-            pref.osVersion = intent.extras?.getString(KEY_OS_VERSION) ?: ""
-            pref.userId = intent.extras?.getLong(KEY_USER_ID) ?: 0
+        val model = intent.getSerializableExtra(KEY_REMINDER) as ReminderBindDataModel
 
-        } ?: kotlin.run {
-            onBackPressed()
-        }
+        viewModel.hostName = model.hostName
+
+        viewModel.token = model.token
+
+        viewModel.personnelId = model.personnelId
+
+        viewModel.postId = model.postId
+
+        viewModel.userId = model.userId
+
+        viewModel.imei = model.imei
+
+        viewModel.appVersion = model.appVersion
+
+        viewModel.deviceModel = model.deviceModel
+
+        viewModel.osVersion = model.osVersion
     }
 
     private fun getEvents() {
         if (!loading.isVisible)
             loading.isVisible = true
         viewModel.getUserActivityList(
-            UserActivityRequest().also { request ->
+            UserActivityListRequest().also { request ->
                 request.userId = viewModel.userId
+                request.pageNumber = pageNumber
                 request.financialYearId = viewModel.financialYear
                 request.typeOperation = 101
                 request.jsonParameters = userActivityListJson(
-                    "",
-                    "",
-                    0
+                    startDate = viewModel.startDate,
+                    endDate = viewModel.currentDate,
+                    activityType = 0
                 )
             }
         )

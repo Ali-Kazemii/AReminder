@@ -2,10 +2,14 @@ package ir.awlrhm.reminder.network
 
 import android.content.Context
 import android.content.SharedPreferences
-import ir.awlrhm.areminder.utils.Const
-import ir.awlrhm.areminder.utils.Const.KEY_ACCESS_TOKEN
-import ir.awlrhm.areminder.utils.Const.KEY_PREFERENCE_NAME
-import ir.awlrhm.areminder.utils.Const.KEY_USER_ID
+import ir.awlrhm.reminder.login.Keys.KEY_ACCESS_TOKEN
+import ir.awlrhm.reminder.login.Keys.KEY_APP_VERSION
+import ir.awlrhm.reminder.login.Keys.KEY_DEVICE_MODEL
+import ir.awlrhm.reminder.login.Keys.KEY_HOST_NAME
+import ir.awlrhm.reminder.login.Keys.KEY_IMEI
+import ir.awlrhm.reminder.login.Keys.KEY_OS_VERSION
+import ir.awlrhm.reminder.login.Keys.KEY_PREFERENCE_NAME
+import ir.awlrhm.reminder.login.Keys.KEY_USER_ID
 
 class PreferenceConfig(
    private val context: Context
@@ -19,45 +23,33 @@ class PreferenceConfig(
 
 
     var imei: String
-        get() = pref.getString(Const.KEY_IMEI, "")!!
+        get() = pref.getString(KEY_IMEI, "")!!
         set(value) {
-            pref.edit().putString(Const.KEY_IMEI, value).apply()
+            pref.edit().putString(KEY_IMEI, value).apply()
         }
 
     var osVersion: String
-        get() = pref.getString(Const.KEY_OS_VERSION, "")!!
+        get() = pref.getString(KEY_OS_VERSION, "")!!
         set(value) {
-            pref.edit().putString(Const.KEY_OS_VERSION, value).apply()
+            pref.edit().putString(KEY_OS_VERSION, value).apply()
         }
 
     var deviceModel: String
-        get() = pref.getString(Const.KEY_DEVICE_MODEL, "")!!
+        get() = pref.getString(KEY_DEVICE_MODEL, "")!!
         set(value) {
-            pref.edit().putString(Const.KEY_DEVICE_MODEL, value).apply()
+            pref.edit().putString(KEY_DEVICE_MODEL, value).apply()
         }
 
     var appVersion: String
-    get() = pref.getString(Const.KEY_APP_VERSION, "")!!
+    get() = pref.getString(KEY_APP_VERSION, "")!!
     set(value) {
-        pref.edit().putString(Const.KEY_APP_VERSION, value).apply()
+        pref.edit().putString(KEY_APP_VERSION, value).apply()
     }
-
-    var ssId: Int
-        get() = pref.getInt(Const.KEY_SSID, 0)
-        set(value) {
-            pref.edit().putInt(Const.KEY_SSID, value).apply()
-        }
 
 
     var userId: Long
         get() = pref.getLong(KEY_USER_ID, 0)
         set(value) {
             pref.edit().putLong(KEY_USER_ID, value).apply()
-        }
-
-    var hostName: String
-        get() = pref.getString(Const.KEY_HOST_NAME, "")!!
-        set(value) {
-            pref.edit().putString(Const.KEY_HOST_NAME, value).apply()
         }
 }

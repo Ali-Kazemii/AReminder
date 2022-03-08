@@ -3,7 +3,7 @@ package ir.awlrhm.areminder.data.network.model.request
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-class UTTUserActivity: Serializable {
+internal class UTTUserActivity: Serializable {
     @SerializedName("RowNum")
     var row = 0
 

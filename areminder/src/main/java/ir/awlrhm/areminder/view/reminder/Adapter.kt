@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.awlrhm_item_reminder.view.*
 import org.joda.time.Chronology
 import org.joda.time.DateTime
 
-class Adapter(
+internal class Adapter(
     private val chronology: Chronology,
     private var list: MutableList<UserActivityResponse.Result>,
     private val callback: OnActionListener

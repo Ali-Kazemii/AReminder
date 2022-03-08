@@ -1,10 +1,10 @@
-package ir.awlrhm.areminder.view.base
+package ir.awlrhm.reminder.login
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 
-abstract class BaseFragmentReminder : Fragment() {
+abstract class BaseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
