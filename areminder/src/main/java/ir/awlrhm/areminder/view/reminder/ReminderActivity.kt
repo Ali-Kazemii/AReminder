@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
-import ir.awlrhm.areminder.utils.Const.KEY_REMINDER
 import ir.awlrhm.areminder.utils.ErrorKey
+import ir.awlrhm.areminder.utils.KEY_REMINDER
 import ir.awlrhm.areminder.utils.initialViewModel
 import ir.awlrhm.areminder.view.reminder.model.ReminderBindDataModel
 import ir.awlrhm.modules.enums.MessageStatus

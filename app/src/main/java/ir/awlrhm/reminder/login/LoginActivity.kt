@@ -3,6 +3,7 @@ package ir.awlrhm.reminder.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import ir.awlrhm.areminder.utils.KEY_REMINDER
 import ir.awlrhm.areminder.view.reminder.ReminderActivity
 import ir.awlrhm.areminder.view.reminder.model.ReminderBindDataModel
 import ir.awlrhm.modules.device.getDeviceIMEI
@@ -17,7 +18,6 @@ import ir.awlrhm.reminder.BuildConfig
 import ir.awlrhm.reminder.HOST_NAME
 import ir.awlrhm.reminder.R
 import ir.awlrhm.reminder.initialLoginViewModel
-import ir.awlrhm.reminder.login.Keys.KEY_REMINDER
 import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginActivity: AppCompatActivity() {
@@ -73,15 +73,6 @@ class LoginActivity: AppCompatActivity() {
                     val intent = Intent(this@LoginActivity, ReminderActivity::class.java)
                     val bundle = Bundle()
                     bundle.putSerializable(KEY_REMINDER, model)
-
-                 /*   bundle.putString(Const.KEY_HOST_NAME, Keys.HOST_NAME)
-                    bundle.putString(Const.KEY_ACCESS_TOKEN, token)
-                    bundle.putInt(Const.KEY_SSID, viewModel.ssId)
-                    bundle.putString(Const.KEY_IMEI, viewModel.imei)
-                    bundle.putString(Const.KEY_DEVICE_MODEL, viewModel.deviceModel)
-                    bundle.putString(Const.KEY_OS_VERSION, viewModel.osVersion)
-                    bundle.putString(Const.KEY_APP_VERSION, viewModel.appVersion)
-                    bundle.putLong(Const.KEY_USER_ID, viewModel.userId)*/
                     intent.putExtras(bundle)
                     startActivity(intent)
                 }

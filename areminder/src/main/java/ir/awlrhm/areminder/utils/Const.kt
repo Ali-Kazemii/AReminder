@@ -3,8 +3,6 @@ package ir.awlrhm.areminder.utils
 internal object Const {
     const val KEY_PREFERENCE_NAME = "reminder"
 
-    const val KEY_REMINDER = "reminder"
-
     const val KEY_LOG_OUT= "logout"
 
     const val KEY_HOST_NAME = "host_name"

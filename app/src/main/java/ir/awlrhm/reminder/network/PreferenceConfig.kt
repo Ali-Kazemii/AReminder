@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import ir.awlrhm.reminder.login.Keys.KEY_ACCESS_TOKEN
 import ir.awlrhm.reminder.login.Keys.KEY_APP_VERSION
 import ir.awlrhm.reminder.login.Keys.KEY_DEVICE_MODEL
-import ir.awlrhm.reminder.login.Keys.KEY_HOST_NAME
 import ir.awlrhm.reminder.login.Keys.KEY_IMEI
 import ir.awlrhm.reminder.login.Keys.KEY_OS_VERSION
 import ir.awlrhm.reminder.login.Keys.KEY_PREFERENCE_NAME
