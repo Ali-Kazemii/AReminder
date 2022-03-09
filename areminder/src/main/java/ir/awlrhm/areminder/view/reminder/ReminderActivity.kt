@@ -20,8 +20,6 @@ class ReminderActivity : AppCompatActivity() {
 
     private lateinit var viewModel: ReminderViewModel
 
-    private var pageNumber = 1
-
     companion object {
         const val KEY_RESULT = "result"
         const val LOG_OUT = 1234321
@@ -44,9 +42,6 @@ class ReminderActivity : AppCompatActivity() {
 
         } else {
             gotoReminderFragment()
-//            handleObservers()
-//            handleError()
-//            getEvents()
         }
     }
 
@@ -71,39 +66,6 @@ class ReminderActivity : AppCompatActivity() {
 
         pref.osVersion = model.osVersion
     }
-
-  /*  private fun getEvents() {
-        if (!loading.isVisible)
-            loading.isVisible = true
-        viewModel.getUserActivityList(
-            UserActivityListRequest().also { request ->
-                request.userId = viewModel.userId
-                request.pageNumber = pageNumber
-                request.financialYearId = viewModel.financialYear
-                request.typeOperation = 101
-                request.jsonParameters = userActivityListJson(
-                    startDate = viewModel.startDate,
-                    endDate = viewModel.currentDate,
-                    activityType = 0
-                )
-            }
-        )
-    }
-*/
-
-/*    private fun handleObservers() {
-        viewModel.listUserActivity.observe(this, {
-            if (lifecycle.currentState == Lifecycle.State.RESUMED) {
-                it.result?.let { list ->
-                    if (loading.isVisible)
-                        loading.isVisible = false
-                    gotoReminderFragment(list)
-                } ?: kotlin.run {
-                    this.finish()
-                }
-            }
-        })
-    }*/
 
     private fun gotoReminderFragment() {
         replaceFragmentInActivity(
@@ -147,7 +109,7 @@ class ReminderActivity : AppCompatActivity() {
         replaceFragmentInActivity(
             R.id.container,
             AddReminderFragment {
-//                getEvents()
+                gotoReminderFragment()
             },
             AddReminderFragment.TAG
         )
@@ -157,25 +119,11 @@ class ReminderActivity : AppCompatActivity() {
         replaceFragmentInActivity(
             R.id.container,
             AddReminderFragment(model) {
-//                getEvents()
+                gotoReminderFragment()
             },
             AddReminderFragment.TAG
         )
     }
-
-/*    private fun handleError() {
-        viewModel.errorEventList.observe(this, {
-            ActionDialog.Builder()
-                .setTitle(getString(R.string.warning))
-                .setDescription(it?.message ?: getString(R.string.response_error))
-                .setCancelable(false)
-                .setNegative(getString(R.string.ok)) {
-                    this.finish()
-                }
-                .build()
-                .show(supportFragmentManager, ActionDialog.TAG)
-        })
-    }*/
 
     fun handleError(error: Int?) {
         error?.let {
