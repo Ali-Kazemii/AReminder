@@ -4,20 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.local.PreferenceConfiguration
-import ir.awlrhm.areminder.data.network.model.request.UserActivityListRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utils.Const.KEY_REMINDER
 import ir.awlrhm.areminder.utils.ErrorKey
 import ir.awlrhm.areminder.utils.initialViewModel
-import ir.awlrhm.areminder.utils.userActivityListJson
 import ir.awlrhm.areminder.view.reminder.model.ReminderBindDataModel
 import ir.awlrhm.modules.enums.MessageStatus
 import ir.awlrhm.modules.extentions.replaceFragmentInActivity
 import ir.awlrhm.modules.extentions.yToast
-import ir.awlrhm.modules.view.ActionDialog
 import kotlinx.android.synthetic.main.activity_reminder.*
 
 class ReminderActivity : AppCompatActivity() {
@@ -47,9 +43,10 @@ class ReminderActivity : AppCompatActivity() {
             this@ReminderActivity.finish()
 
         } else {
-            handleObservers()
-            handleError()
-            getEvents()
+            gotoReminderFragment()
+//            handleObservers()
+//            handleError()
+//            getEvents()
         }
     }
 
@@ -75,7 +72,7 @@ class ReminderActivity : AppCompatActivity() {
         pref.osVersion = model.osVersion
     }
 
-    private fun getEvents() {
+  /*  private fun getEvents() {
         if (!loading.isVisible)
             loading.isVisible = true
         viewModel.getUserActivityList(
@@ -92,24 +89,26 @@ class ReminderActivity : AppCompatActivity() {
             }
         )
     }
+*/
 
-    private fun handleObservers() {
+/*    private fun handleObservers() {
         viewModel.listUserActivity.observe(this, {
-            it.result?.let { list ->
-                if (loading.isVisible)
-                    loading.isVisible = false
-                gotoReminderFragment(list)
-            } ?: kotlin.run {
-                this.finish()
+            if (lifecycle.currentState == Lifecycle.State.RESUMED) {
+                it.result?.let { list ->
+                    if (loading.isVisible)
+                        loading.isVisible = false
+                    gotoReminderFragment(list)
+                } ?: kotlin.run {
+                    this.finish()
+                }
             }
         })
-    }
+    }*/
 
-    private fun gotoReminderFragment(list: MutableList<UserActivityResponse.Result>) {
+    private fun gotoReminderFragment() {
         replaceFragmentInActivity(
             R.id.container,
             ReminderFragment(
-                list,
                 object : ReminderFragment.OnActionListener {
                     override fun onAdd() {
                         gotoAddReminder()
@@ -148,7 +147,7 @@ class ReminderActivity : AppCompatActivity() {
         replaceFragmentInActivity(
             R.id.container,
             AddReminderFragment {
-                getEvents()
+//                getEvents()
             },
             AddReminderFragment.TAG
         )
@@ -158,17 +157,17 @@ class ReminderActivity : AppCompatActivity() {
         replaceFragmentInActivity(
             R.id.container,
             AddReminderFragment(model) {
-                getEvents()
+//                getEvents()
             },
             AddReminderFragment.TAG
         )
     }
 
-    private fun handleError() {
+/*    private fun handleError() {
         viewModel.errorEventList.observe(this, {
             ActionDialog.Builder()
                 .setTitle(getString(R.string.warning))
-                .setDescription(it.message ?: getString(R.string.response_error))
+                .setDescription(it?.message ?: getString(R.string.response_error))
                 .setCancelable(false)
                 .setNegative(getString(R.string.ok)) {
                     this.finish()
@@ -176,7 +175,7 @@ class ReminderActivity : AppCompatActivity() {
                 .build()
                 .show(supportFragmentManager, ActionDialog.TAG)
         })
-    }
+    }*/
 
     fun handleError(error: Int?) {
         error?.let {

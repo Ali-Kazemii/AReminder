@@ -8,17 +8,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import ir.awlrhm.areminder.R
+import ir.awlrhm.areminder.data.network.model.request.UserActivityListRequest
 import ir.awlrhm.areminder.data.network.model.response.UserActivityResponse
 import ir.awlrhm.areminder.utils.getMonthName
 import ir.awlrhm.areminder.utils.initialViewModel
+import ir.awlrhm.areminder.utils.userActivityListJson
 import ir.awlrhm.areminder.view.acalenar.PersianHorizontalCalendar
 import ir.awlrhm.areminder.view.acalenar.enums.PersianCustomMarks
 import ir.awlrhm.areminder.view.acalenar.enums.PersianViewPagerType
 import ir.awlrhm.areminder.view.base.BaseFragment
+import ir.awlrhm.modules.extentions.showError
 import kotlinx.android.synthetic.main.contain_reminder.*
 import kotlinx.android.synthetic.main.fragment_reminder.*
 import org.joda.time.Chronology
@@ -27,12 +31,15 @@ import org.joda.time.DateTimeZone
 import org.joda.time.chrono.PersianChronologyKhayyam
 
 internal class ReminderFragment(
-    private val listEvents: MutableList<UserActivityResponse.Result>,
     private val listener: OnActionListener
 ) : BaseFragment(), PersianHorizontalCalendar.OnActionListener {
 
     private lateinit var viewModel: ReminderViewModel
+    private val listEvents: MutableList<UserActivityResponse.Result> = mutableListOf()
+
     private var adapter: Adapter? = null
+
+    private var pageNumber = 1
 
     private val chronology: Chronology =
         PersianChronologyKhayyam.getInstance(DateTimeZone.getDefault())
@@ -73,8 +80,6 @@ internal class ReminderFragment(
         rclItemEvent.layoutManager = LinearLayoutManager(context)
         //this line cause the nested scroll remain on top of the list
 //        nestedScroll.parent.requestChildFocus(nestedScroll, nestedScroll)
-        if(listEvents.isEmpty())
-            btnShowEvents.isVisible = false
 
         btnBack.setOnClickListener {
             activity.onBackPressed()
@@ -91,28 +96,33 @@ internal class ReminderFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        markEventDays()
-        refreshCalendar()
-
+        getEvents()
     }
 
-    private fun refreshCalendar() {
-        persianCalendar.refresh()
-    }
+    override fun handleObservers() {
+        viewModel.listUserActivity.observe(this, {
+            loading.isVisible = false
+            if (lifecycle.currentState == Lifecycle.State.RESUMED) {
+                it.result?.let { list ->
+                    initReminder(list)
 
-    private fun markEventDays() {
-        listEvents.forEach { model ->
-            val date = model.startDate?.split("/")
-            date?.let { d ->
-                val dateTime = DateTime(d[0].toInt(), d[1].toInt(), d[2].toInt(), 0, 0, chronology)
-                model.dateTime = "${dateTime.year}${dateTime.monthOfYear}${dateTime.dayOfMonth}"
-                persianCalendar.markDate(
-                    dateTime,
-                    PersianCustomMarks.SmallOval_Bottom,
-                    Color.RED
-                )
+                } ?: kotlin.run {
+                    activity?.showError(it?.message)
+                }
             }
-        }
+        })
+    }
+
+    private fun initReminder(list: MutableList<UserActivityResponse.Result>) {
+        listEvents.clear()
+        listEvents.addAll(list)
+
+        if(listEvents.isEmpty())
+            btnShowEvents.isVisible = false
+
+        markEventDays()
+
+        refreshCalendar()
     }
 
     override fun handleOnClickListeners() {
@@ -177,6 +187,45 @@ internal class ReminderFragment(
             })
     }
 
+
+    private fun getEvents() {
+        if (!loading.isVisible)
+            loading.isVisible = true
+
+        viewModel.getUserActivityList(
+            UserActivityListRequest().also { request ->
+                request.userId = viewModel.userId
+                request.pageNumber = pageNumber
+                request.financialYearId = viewModel.financialYear
+                request.typeOperation = 101
+                request.jsonParameters = userActivityListJson(
+                    startDate = viewModel.startDate,
+                    endDate = viewModel.currentDate,
+                    activityType = 0
+                )
+            }
+        )
+    }
+
+    private fun refreshCalendar() {
+        persianCalendar.refresh()
+    }
+
+    private fun markEventDays() {
+        listEvents.forEach { model ->
+            val date = model.startDate?.split("/")
+            date?.let { d ->
+                val dateTime = DateTime(d[0].toInt(), d[1].toInt(), d[2].toInt(), 0, 0, chronology)
+                model.dateTime = "${dateTime.year}${dateTime.monthOfYear}${dateTime.dayOfMonth}"
+                persianCalendar.markDate(
+                    dateTime,
+                    PersianCustomMarks.SmallOval_Bottom,
+                    Color.RED
+                )
+            }
+        }
+    }
+
     override fun onCalendarFinishAnimaiton() {
         loading.isVisible = false
     }
@@ -220,8 +269,13 @@ internal class ReminderFragment(
             current - 10
     }
 
-    override fun handleObservers() {}
-    override fun handleError() {}
+
+
+    override fun handleError() {
+        viewModel.errorEventList.observe(this, {
+           activity?.showError(it?.message)
+        })
+    }
 
     interface OnActionListener {
         fun onAdd()

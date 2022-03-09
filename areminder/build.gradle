@@ -63,8 +63,8 @@ dependencies {
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
     //glide
-    implementation "com.github.bumptech.glide:glide:4.11.0"
-    annotationProcessor "com.github.bumptech.glide:compiler:4.10.0"
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
     //date time
     implementation 'com.github.mohamadian:PersianJodaTime:1.2'
     //module

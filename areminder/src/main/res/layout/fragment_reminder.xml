@@ -105,6 +105,7 @@
     <include
         android:id="@+id/loading"
         layout="@layout/loading"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAdd"
         android:layout_width="wrap_content"

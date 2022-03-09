@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import ir.awlrhm.areminder.R
 import ir.awlrhm.areminder.data.network.model.request.UserActivityListRequest
@@ -24,6 +25,7 @@ internal class ReminderListFragment(
 ) : BaseFragment() {
 
     private lateinit var viewModel: ReminderViewModel
+    private var pageNumber = 1
 
     override fun setup() {
         val activity = activity ?: return
@@ -48,14 +50,23 @@ internal class ReminderListFragment(
         super.onResume()
         if (!loading.isVisible)
             loading.isVisible = true
+
+        getUserActivityList()
+    }
+
+    private fun getUserActivityList(
+        startDate: String = "",
+        endDate: String = ""
+    ) {
         viewModel.getUserActivityList(
             UserActivityListRequest().also { request ->
                 request.userId = viewModel.userId
                 request.financialYearId = viewModel.financialYear
+                request.pageNumber = pageNumber
                 request.typeOperation = 101
                 request.jsonParameters = userActivityListJson(
-                    "",
-                    "",
+                    startDate = startDate,
+                    endDate = endDate,
                     0
                 )
             }
@@ -73,17 +84,9 @@ internal class ReminderListFragment(
         btnFilter.setOnClickListener {
             FilterReminderBottomSheet { start, end ->
                 loading.isVisible = true
-                viewModel.getUserActivityList(
-                    UserActivityListRequest().also { request ->
-                        request.userId = viewModel.userId
-                        request.financialYearId = viewModel.financialYear
-                        request.typeOperation = 101
-                        request.jsonParameters = userActivityListJson(
-                            start,
-                            end,
-                            0
-                        )
-                    }
+                getUserActivityList(
+                    startDate = start,
+                    endDate = end
                 )
             }.show(activity.supportFragmentManager, FilterReminderBottomSheet.TAG)
         }
@@ -91,26 +94,28 @@ internal class ReminderListFragment(
 
     override fun handleObservers() {
         viewModel.listUserActivity.observe(viewLifecycleOwner, {
-            it.result?.let { list ->
-                if (list.isNotEmpty()) {
-                    loading.isVisible = false
-                    rclReminder.adapter = Adapter(
-                        PersianChronologyKhayyam.getInstance(
-                            DateTimeZone.getDefault()
-                        ),
-                        list.asReversed(),
-                        object : Adapter.OnActionListener {
-                            override fun onItemSelect(model: UserActivityResponse.Result) {
-                                callback.onItemSelect(model)
+            if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                it.result?.let { list ->
+                    if (list.isNotEmpty()) {
+                        loading.isVisible = false
+                        rclReminder.adapter = Adapter(
+                            PersianChronologyKhayyam.getInstance(
+                                DateTimeZone.getDefault()
+                            ),
+                            list.asReversed(),
+                            object : Adapter.OnActionListener {
+                                override fun onItemSelect(model: UserActivityResponse.Result) {
+                                    callback.onItemSelect(model)
+                                }
                             }
-                        }
-                    )
-                    rclReminder.scrollToPosition(0)
+                        )
+                        rclReminder.scrollToPosition(0)
 
-                } else
+                    } else
+                        showNoData()
+                } ?: kotlin.run {
                     showNoData()
-            } ?: kotlin.run {
-                showNoData()
+                }
             }
         })
     }
@@ -130,7 +135,7 @@ internal class ReminderListFragment(
         viewModel.errorEventList.observe(this, {
             ActionDialog.Builder()
                 .setTitle(getString(R.string.warning))
-                .setDescription(it.message ?: getString(R.string.response_error))
+                .setDescription(it?.message ?: getString(R.string.response_error))
                 .setCancelable(true)
                 .setNegative(getString(R.string.ok)) {}
                 .build()
