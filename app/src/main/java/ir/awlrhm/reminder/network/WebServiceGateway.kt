@@ -1,8 +1,8 @@
 package ir.awlrhm.reminder.network
 
 import ir.awlrhm.areminder.BuildConfig
-import ir.awlrhm.areminder.utils.HOST_NAME
 import ir.awlrhm.areminder.utils.SSID
+import ir.awlrhm.reminder.HOST_NAME
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
