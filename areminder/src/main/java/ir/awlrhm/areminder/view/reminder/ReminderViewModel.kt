@@ -56,18 +56,6 @@ internal class ReminderViewModel() : ViewModel() {
     val startDate: String
         get() = "${currentDate.split('/')[0]}/01/01"
 
-    var hostName: String
-        get() = pref.hostName
-        set(value) {
-            pref.hostName = value
-        }
-
-    var token: String
-        get() = pref.accessToken
-        set(value) {
-            pref.accessToken = value
-        }
-
 
     var isLogout: Boolean
         get() = pref.isLogout
@@ -75,12 +63,6 @@ internal class ReminderViewModel() : ViewModel() {
             pref.isLogout = value
         }
 
-
-    var personnelId: Long
-        get() = pref.personnelId
-        set(value) {
-            pref.personnelId = value
-        }
 
     var userId: Long
         get() = pref.userId
@@ -94,23 +76,6 @@ internal class ReminderViewModel() : ViewModel() {
             pref.imei = value
         }
 
-    var osVersion: String
-        get() = pref.osVersion
-        set(value) {
-            pref.osVersion = value
-        }
-
-    var appVersion: String
-        get() = pref.appVersion
-        set(value) {
-            pref.appVersion = value
-        }
-
-    var deviceModel: String
-        get() = pref.deviceModel
-        set(value) {
-            pref.deviceModel = value
-        }
 
     fun getReminderType(
         request: ReminderTypeRequest
