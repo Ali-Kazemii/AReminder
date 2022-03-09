@@ -3,7 +3,6 @@ package ir.awlrhm.reminder.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ir.awlrhm.areminder.utils.HOST_NAME
 import ir.awlrhm.areminder.view.reminder.ReminderActivity
 import ir.awlrhm.areminder.view.reminder.model.ReminderBindDataModel
 import ir.awlrhm.modules.device.getDeviceIMEI
@@ -15,6 +14,7 @@ import ir.awlrhm.modules.extentions.replaceFragmentInActivity
 import ir.awlrhm.modules.extentions.yToast
 import ir.awlrhm.modules.utils.OnPermissionListener
 import ir.awlrhm.reminder.BuildConfig
+import ir.awlrhm.reminder.HOST_NAME
 import ir.awlrhm.reminder.R
 import ir.awlrhm.reminder.initialLoginViewModel
 import ir.awlrhm.reminder.login.Keys.KEY_REMINDER

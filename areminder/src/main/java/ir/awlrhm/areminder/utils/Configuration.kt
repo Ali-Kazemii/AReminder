@@ -1,8 +1,5 @@
 package ir.awlrhm.areminder.utils
 
-const val HOST_NAME = "http://185.79.156.176:8014/api/" //Alborz
-//    const val HOST_NAME = "http://185.79.156.176:8013/api/" //semnan-server
-
 const val SSID_AUTOMATION = 982
 const val SSID_SUPERVISORS = 986
 const val SSID_MANAGERS = 981
@@ -17,4 +14,4 @@ val PAGE_SIZE = 50
 
 val APP_NAME = "Reminder"
 
-val SSID = SSID_AUTOMATION
+val SSID = SSID_ASSET_MANAGEMENT
