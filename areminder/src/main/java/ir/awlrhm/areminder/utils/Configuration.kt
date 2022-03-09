@@ -8,7 +8,7 @@ const val SSID_WAREHOUSE = 989
 const val SSID_ASSET_MANAGEMENT = 917
 const val SSID_VALUE_ENGINEERING = 906
 
-
+const val KEY_REMINDER = "reminder"
 
 val PAGE_SIZE = 50
 
