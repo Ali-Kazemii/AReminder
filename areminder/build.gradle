@@ -66,5 +66,5 @@ dependencies {
     //date time
     implementation 'com.github.mohamadian:PersianJodaTime:1.2'
     //module
-    implementation 'com.github.AWLRHM:Module:2.1.0'
+    implementation 'com.github.ali-kazemii:Module:2.1.2'
 }
